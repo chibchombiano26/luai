@@ -1,0 +1,16 @@
+{
+  "id": "weather",
+  "name": "Weather flows",
+  "version": "1.0.0",
+  "description": "Weather forecast flows backed by APIs and Langflow-compatible cards.",
+  "admin": {
+    "cardOptions": {
+      "weather_forecast": {
+        "configPlaceholder": {
+          "es": "{\n  \"provider\": \"open-meteo\",\n  \"units\": \"metric\",\n  \"lang\": \"es\",\n  \"defaultLocation\": \"Bogotá\",\n  \"forecastDays\": 5\n}",
+          "en": "{\n  \"provider\": \"open-meteo\",\n  \"units\": \"metric\",\n  \"lang\": \"en\",\n  \"defaultLocation\": \"Bogota\",\n  \"forecastDays\": 5\n}"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuAI | Conversational AI with Rich UI Widgets</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <div class="grid-overlay"></div>
+    <div class="cursor-glow"></div>
+
+    <header class="top-nav" id="top-nav">
+        <div class="top-nav-inner">
+            <div class="top-nav-brand">
+                <img src="./icons/icon-192.png" class="top-nav-icon" alt="LuAI">
+                <span class="top-nav-logo">LuAI</span>
+            </div>
+            <span class="top-nav-section" id="top-nav-section"></span>
+            <div class="top-nav-right">
+                <div class="lang-switcher">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="es">ES</button>
+                    <button class="lang-btn" data-lang="fr">FR</button>
+                    <button class="lang-btn" data-lang="it">IT</button>
+                    <button class="lang-btn" data-lang="pt">PT</button>
+                    <button class="lang-btn" data-lang="de">DE</button>
+                    <button class="lang-btn" data-lang="zh">中文</button>
+                    <button class="lang-btn" data-lang="ja">日本語</button>
+                    <button class="lang-btn" data-lang="ar">AR</button>
+                </div>
+                <a href="https://github.com/chibchombiano26/generative_ui" target="_blank" class="top-nav-cta" data-i18n="topnav.github">GitHub →</a>
+            </div>
+        </div>
+        <div class="top-nav-progress" id="top-nav-progress"></div>
+    </header>
+
+    <div class="lang-switcher-fixed">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="es">ES</button>
+        <button class="lang-btn" data-lang="fr">FR</button>
+        <button class="lang-btn" data-lang="it">IT</button>
+        <button class="lang-btn" data-lang="pt">PT</button>
+        <button class="lang-btn" data-lang="de">DE</button>
+        <button class="lang-btn" data-lang="zh">中文</button>
+        <button class="lang-btn" data-lang="ja">日本語</button>
+        <button class="lang-btn" data-lang="ar">AR</button>
+    </div>
+
+    <nav class="floating-nav">
+        <button id="theme-toggle" class="nav-dot" style="background: var(--accent-cyan); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; margin-bottom: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--bg-dark)"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <a href="#hero"         class="nav-dot active" data-label-i18n="nav.hero"></a>
+        <a href="#why"          class="nav-dot" data-label-i18n="nav.why"></a>
+        <a href="#capabilities" class="nav-dot" data-label-i18n="nav.cap"></a>
+        <a href="#compare"      class="nav-dot" data-label-i18n="nav.compare"></a>
+        <a href="#technical"    class="nav-dot" data-label-i18n="nav.tech"></a>
+        <a href="#try"          class="nav-dot" data-label-i18n="nav.try"></a>
+    </nav>
+
+    <div class="page-wrapper">
+        <header id="hero" class="hero">
+            <div class="hero-content">
+                <span class="kicker" data-i18n="hero.kicker">Conversational AI · Rich UI Widgets</span>
+                <h1 data-i18n-html="hero.h1">Chat that<br>shows, not<br>just tells.</h1>
+                <p class="summary" data-i18n="hero.summary">
+                    LuAI turns AI conversations into rich visual experiences. Ask a question, get a widget — weather, quotes, live data — rendered inline in the chat.
+                </p>
+                <div class="hero-actions">
+                    <a href="#technical" class="btn btn-primary" data-i18n="hero.btn1">The Architecture</a>
+                    <a href="https://github.com/chibchombiano26/generative_ui" class="btn btn-secondary" data-i18n="hero.btn2">Source Code</a>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="app-mockup">
+                    <div class="mockup-bar">
+                        <span class="mockup-dot-red"></span>
+                        <span class="mockup-dot-yellow"></span>
+                        <span class="mockup-dot-green"></span>
+                        <span class="mockup-title-bar">LuAI · weather pack</span>
+                    </div>
+                    <div class="mockup-chat">
+                        <div class="chat-msg user-msg" data-i18n="mockup.question">What's the weather in Bogotá?</div>
+                        <div class="chat-widget">
+                            <span class="widget-pack-tag">⛅ weather · flow-pack</span>
+                            <div class="widget-body">
+                                <span class="widget-temp">22°C</span>
+                                <div class="widget-details">
+                                    <span class="widget-city">Bogotá, Colombia</span>
+                                    <span class="widget-cond" data-i18n="mockup.cond">Partly cloudy</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-msg ai-msg" data-i18n="mockup.answer">Here's the live weather for Bogotá.</div>
+                        <div class="mockup-input-row">
+                            <span class="mockup-placeholder" data-i18n="mockup.placeholder">Ask anything...</span>
+                            <span class="mockup-send-btn">↑</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="floating-chip chip-1" data-i18n="chip.insurance">⚡ insurance pack</div>
+                <div class="floating-chip chip-2" data-i18n="chip.weather">🌤 weather pack</div>
+                <div class="floating-chip chip-3" data-i18n="chip.add">＋ add pack</div>
+            </div>
+        </header>
+
+        <section id="why" class="section">
+            <div class="reveal">
+                <span class="kicker" data-i18n="why.kicker">Why it matters</span>
+                <h2 data-i18n-html="why.h2">Users don't want walls of text.<br>They want answers they can see.</h2>
+                <p class="section-copy" data-i18n="why.copy">
+                    Getting text from a model is easy. Turning that response into something visual, structured, and trustworthy — that's the hard part.
+                </p>
+            </div>
+
+            <div class="comparison-grid">
+                <article class="detail-card reveal card-bad">
+                    <span class="panel-label panel-label-bad" data-i18n="bad.label">Text-only AI</span>
+                    <ul class="bullet-list bullet-list-bad">
+                        <li data-i18n="bad.li1">Long responses users don't read</li>
+                        <li data-i18n="bad.li2">Data buried in paragraphs</li>
+                        <li data-i18n="bad.li3">No structure, no visual hierarchy</li>
+                    </ul>
+                </article>
+                <article class="detail-card reveal card-good">
+                    <span class="panel-label panel-label-good" data-i18n="good.label">LuAI with flow-packs</span>
+                    <ul class="bullet-list bullet-list-good">
+                        <li data-i18n="good.li1">Answers rendered as rich UI widgets</li>
+                        <li data-i18n="good.li2">Structured data shown visually</li>
+                        <li data-i18n="good.li3">Each domain gets its own card design</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section id="capabilities" class="section">
+            <div class="reveal">
+                <span class="kicker" data-i18n="cap.kicker">Capabilities</span>
+                <h2 data-i18n="cap.h2">Chat + Widgets, as one.</h2>
+            </div>
+            <div class="comparison-grid">
+                <div class="detail-card reveal">
+                    <h3 data-i18n="cap.card1.h3">Flow Packs</h3>
+                    <p style="color:var(--text-muted)" data-i18n="cap.card1.p">Each domain ships as an isolated pack with its own tools, prompts, and widget UI. Add new domains without touching the core.</p>
+                </div>
+                <div class="detail-card reveal">
+                    <h3 data-i18n="cap.card2.h3">Build-time Wiring</h3>
+                    <p style="color:var(--text-muted)" data-i18n="cap.card2.p">Packs are registered at build time. No runtime discovery, no hidden magic — explicit, type-safe integrations.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="compare" class="section">
+            <div class="reveal">
+                <span class="kicker" data-i18n="compare.kicker">Ecosystem</span>
+                <h2 data-i18n="compare.h2">How we compare.</h2>
+            </div>
+            <div class="comparison-table reveal">
+                <div class="comparison-row comparison-head">
+                    <div data-i18n="compare.col1">Path</div>
+                    <div data-i18n="compare.col2">Speed to Market</div>
+                    <div data-i18n="compare.col3">Workflow Architecture</div>
+                    <div data-i18n="compare.col4">Foundational Layer</div>
+                </div>
+                <div class="comparison-row">
+                    <div data-i18n="compare.r1c1">Blank Stack</div>
+                    <div data-i18n="compare.r1c2">Low</div>
+                    <div data-i18n="compare.r1c3">None</div>
+                    <div data-i18n="compare.r1c4">No</div>
+                </div>
+                <div class="comparison-row comparison-highlight">
+                    <div>LuAI</div>
+                    <div data-i18n="compare.r2c2">Maximum</div>
+                    <div data-i18n="compare.r2c3">Pack-based &amp; Composable</div>
+                    <div data-i18n="compare.r2c4">Yes</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="technical" class="section">
+            <div class="reveal">
+                <span class="kicker" data-i18n="tech.kicker">Technical Credibility</span>
+                <h2 data-i18n="tech.h2">Opinionated, but not hidden.</h2>
+                <p class="section-copy" data-i18n="tech.copy">
+                    LuAI scans manifests, resolves modules, and generates static mount files during build.
+                    This gives you extensibility without losing visibility.
+                </p>
+            </div>
+            <div class="build-flow reveal">
+                <div class="flow-node" id="fn-pack">
+                    <span class="flow-icon">📦</span>
+                    <span class="flow-name">pack.json</span>
+                    <span class="flow-desc" data-i18n="flow.pack">Declares tools, cards, routes &amp; MCP</span>
+                </div>
+                <div class="flow-arrow" id="fa-1">
+                    <div class="flow-arrow-line"></div>
+                    <span class="flow-arrow-label">npm run build:flow-packs</span>
+                </div>
+                <div class="flow-node" id="fn-gen">
+                    <span class="flow-icon">⚙️</span>
+                    <span class="flow-name" data-i18n="flow.gen.name">Code generation</span>
+                    <span class="flow-desc" data-i18n="flow.gen.desc">Scans manifests, resolves modules</span>
+                </div>
+                <div class="flow-arrow" id="fa-2">
+                    <div class="flow-arrow-line"></div>
+                </div>
+                <div class="flow-outputs">
+                    <div class="flow-output" id="fo-1"><span class="fo-dot"></span>generated-flow-packs.ts</div>
+                    <div class="flow-output" id="fo-2"><span class="fo-dot"></span>generated-flow-pack-ui.tsx</div>
+                    <div class="flow-output" id="fo-3"><span class="fo-dot"></span>generated-flow-pack-server.ts</div>
+                    <div class="flow-output" id="fo-4"><span class="fo-dot"></span>generated-flow-pack-mcp.ts</div>
+                </div>
+                <div class="flow-arrow" id="fa-3">
+                    <div class="flow-arrow-line"></div>
+                </div>
+                <div class="flow-node flow-node-final" id="fn-app">
+                    <span class="flow-icon">🚀</span>
+                    <span class="flow-name" data-i18n="flow.app.name">Running app</span>
+                    <span class="flow-desc" data-i18n="flow.app.desc">Type-safe, zero runtime magic</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="try" class="section try-section">
+            <div class="try-inner reveal">
+                <div class="try-badge" data-i18n="try.badge">Open Source</div>
+                <h2 class="try-heading" data-i18n="try.h2">Try today</h2>
+                <p class="try-sub" data-i18n="try.sub">Clone it, run it, and decide if this should be your next AI foundation.</p>
+
+                <div class="pwa-showcase reveal">
+                    <div class="pwa-card">
+                        <img src="./icons/icon-512.png" alt="LuAI 512px" class="pwa-icon-img large">
+                        <span class="pwa-icon-label">512 × 512</span>
+                        <span class="pwa-icon-type" data-i18n="pwa.splash">Desktop / Splash</span>
+                    </div>
+                    <div class="pwa-card">
+                        <img src="./icons/icon-192.png" alt="LuAI 192px" class="pwa-icon-img medium">
+                        <span class="pwa-icon-label">192 × 192</span>
+                        <span class="pwa-icon-type" data-i18n="pwa.android">Android homescreen</span>
+                    </div>
+                    <div class="pwa-card">
+                        <img src="./icons/apple-touch-icon.png" alt="LuAI Apple" class="pwa-icon-img medium">
+                        <span class="pwa-icon-label">180 × 180</span>
+                        <span class="pwa-icon-type" data-i18n="pwa.apple">Apple touch icon</span>
+                    </div>
+                    <div class="pwa-card">
+                        <div class="pwa-maskable-wrap">
+                            <img src="./icons/icon-maskable-512.png" alt="LuAI Maskable" class="pwa-icon-img large maskable">
+                        </div>
+                        <span class="pwa-icon-label">512 × 512</span>
+                        <span class="pwa-icon-type" data-i18n="pwa.maskable">Maskable (adaptive)</span>
+                    </div>
+                </div>
+
+                <div class="try-motion-accent reveal" id="try-motion-accent">
+                    <video
+                        id="try-motion-video"
+                        class="try-motion-video"
+                        muted
+                        playsinline
+                        autoplay
+                        loop
+                        preload="metadata"
+                        poster="./loader/loader_1_poster.jpg"
+                    ></video>
+                    <div class="try-motion-overlay">
+                        <span class="try-motion-kicker">LuAI Motion</span>
+                        <span class="try-motion-label" id="try-motion-label">Random loop</span>
+                    </div>
+                </div>
+
+                <div class="try-terminal reveal">
+                    <span class="terminal-prompt">$</span>
+                    <span class="terminal-text" id="typed-cmd"></span>
+                    <span class="terminal-cursor">▍</span>
+                </div>
+
+                <div class="try-actions reveal">
+                    <a href="https://github.com/chibchombiano26/generative_ui" target="_blank" class="btn btn-primary try-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right:.6rem"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.04c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.48.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                        <span data-i18n="try.repo">Open repository</span>
+                    </a>
+                    <a href="https://github.com/chibchombiano26/generative_ui/archive/refs/heads/main.zip" class="btn btn-secondary try-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:.6rem"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span data-i18n="try.download">Download code</span>
+                    </a>
+                </div>
+
+                <div class="try-steps reveal">
+                    <div class="try-step">
+                        <span class="step-num">1</span>
+                        <span class="step-label" data-i18n="try.step1">Clone the repo</span>
+                    </div>
+                    <div class="try-step-arrow">→</div>
+                    <div class="try-step">
+                        <span class="step-num">2</span>
+                        <span class="step-label">npm run dev</span>
+                    </div>
+                    <div class="try-step-arrow">→</div>
+                    <div class="try-step">
+                        <span class="step-num">3</span>
+                        <span class="step-label" data-i18n="try.step3">Ship your pack</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer style="padding: 5rem 0; border-top: 1px solid var(--glass-border); text-align: center;">
+            <p data-i18n="footer">&copy; 2026 LuAI</p>
+        </footer>
+    </div>
+
+    <!-- Hidden game: type "luai" anywhere -->
+    <div id="game-overlay" class="game-overlay">
+        <div class="game-modal">
+            <div class="game-header">
+                <span class="game-title">⚔ DEFEND LuAI</span>
+                <div class="game-stats">
+                    <span>SCORE <span id="g-score">0</span></span>
+                    <span>WAVE <span id="g-wave">1</span></span>
+                    <span>LIVES <span id="g-lives">♥♥♥</span></span>
+                </div>
+            </div>
+            <canvas id="game-canvas"></canvas>
+            <div class="game-footer">← → MOVE &nbsp;·&nbsp; SPACE SHOOT &nbsp;·&nbsp; R RESTART &nbsp;·&nbsp; ESC EXIT</div>
+            <div id="game-message" class="game-message"></div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

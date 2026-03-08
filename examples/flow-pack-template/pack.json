@@ -1,0 +1,17 @@
+{
+  "id": "template",
+  "name": "Template Pack",
+  "version": "1.0.0",
+  "description": "Starter template for a custom LuAI flow pack.",
+  "admin": {
+    "cardOptions": {
+      "template_card": {
+        "configPlaceholder": {
+          "es": "{\n  \"mode\": \"demo\",\n  \"temperature\": 0.2\n}",
+          "en": "{\n  \"mode\": \"demo\",\n  \"temperature\": 0.2\n}"
+        }
+      }
+    }
+  }
+}
+

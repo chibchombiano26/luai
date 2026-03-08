@@ -1,0 +1,59 @@
+{
+  "id": "weather_forecast",
+  "packId": "weather",
+  "kind": "native",
+  "adapter": "weather_forecast",
+  "order": 30,
+  "category": "weather",
+  "defaultEnabled": false,
+  "toolId": "show_weather_forecast",
+  "langflowEndpoint": "/weather/forecast",
+  "supportedToolIds": [
+    "show_weather_forecast"
+  ],
+  "name": {
+    "es": "Pronóstico del clima",
+    "en": "Weather forecast"
+  },
+  "description": {
+    "es": "Consulta pronóstico y resumen climático usando un flujo Langflow.",
+    "en": "Get weather forecast and summary through a Langflow flow."
+  },
+  "systemPromptByLocale": {
+    "es": "FLUJO: Clima (weather_forecast)\n- Usa show_weather_forecast cuando pidan pronóstico del clima para una ubicación.",
+    "en": "FLOW: Weather (weather_forecast)\n- Use show_weather_forecast when the user asks for a weather forecast for a location."
+  },
+  "commands": [
+    {
+      "id": "weather_forecast",
+      "toolId": "show_weather_forecast",
+      "order": 30,
+      "includeInMenu": true,
+      "iconKey": "cloud-sun",
+      "name": {
+        "es": "Pronóstico del Clima",
+        "en": "Weather Forecast"
+      },
+      "description": {
+        "es": "Consultar pronóstico para una ubicación",
+        "en": "Get weather forecast for a location"
+      },
+      "category": {
+        "es": "Clima",
+        "en": "Weather"
+      },
+      "example": {
+        "es": "/clima",
+        "en": "/weather"
+      },
+      "prompt": {
+        "es": "Muéstrame el pronóstico del clima para una ubicación",
+        "en": "Show me the weather forecast for a location"
+      },
+      "aliases": {
+        "es": ["clima", "tiempo", "forecast"],
+        "en": ["forecast", "weather"]
+      }
+    }
+  ]
+}

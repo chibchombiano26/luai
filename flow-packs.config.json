@@ -1,0 +1,6 @@
+{
+  "publicLocalDirectories": ["flow-packs"],
+  "localDirectories": ["flow-packs", "my-flow-packs"],
+  "publicPackageNames": [],
+  "packageNames": []
+}

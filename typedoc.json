@@ -1,0 +1,51 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "LuAI Host API Reference",
+  "tsconfig": "tsconfig.typedoc.json",
+  "entryPoints": [
+    "src/components/ThemeProvider.tsx",
+    "src/hooks/useTheme.ts",
+    "src/lib/access/roles.ts",
+    "src/lib/ai-providers.ts",
+    "src/lib/auth.ts",
+    "src/lib/browser-storage.ts",
+    "src/lib/database-provider-config.ts",
+    "src/lib/db.ts",
+    "src/lib/http/curl-debug.ts",
+    "src/lib/i18n.ts",
+    "src/lib/query/query-client.ts",
+    "src/lib/repositories/ai-provider-secret-repository.ts",
+    "src/lib/repositories/platform-settings-repository.ts",
+    "src/lib/security.ts",
+    "src/lib/theme.ts",
+    "src/lib/types/json.ts"
+  ],
+  "entryPointStrategy": "expand",
+  "plugin": [
+    "typedoc-plugin-markdown"
+  ],
+  "out": "docs/reference/api",
+  "readme": "none",
+  "router": "module",
+  "hideGenerator": true,
+  "githubPages": false,
+  "cleanOutputDir": true,
+  "skipErrorChecking": true,
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.json",
+    "**/generated-flow-packs.ts",
+    "**/generated-flow-pack-server.ts",
+    "**/generated-flow-pack-ui.tsx"
+  ],
+  "excludeExternals": true,
+  "excludeInternal": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeReferences": true,
+  "sort": [
+    "source-order"
+  ],
+  "useFirstParagraphOfCommentAsSummary": true
+}

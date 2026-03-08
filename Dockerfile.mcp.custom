@@ -1,0 +1,30 @@
+FROM node:20-bookworm-slim
+
+WORKDIR /app
+
+ARG FLOW_PACKS_DIR=./my-flow-packs
+
+# Install root dependencies used by shared pack libs imported by the MCP server.
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --legacy-peer-deps
+
+# Install MCP dependencies (includes ts-node used by the start script).
+COPY src/mcp-server/package.json src/mcp-server/package-lock.json ./src/mcp-server/
+RUN npm --prefix ./src/mcp-server ci
+
+# Copy source after deps for better layer caching.
+COPY . .
+
+# Replace ./my-flow-packs with your own pack directory before building this image.
+COPY ./my-flow-packs ./my-flow-packs
+
+ENV FLOW_PACKS_DIR=${FLOW_PACKS_DIR}
+RUN npm run build:flow-packs
+
+ENV NODE_ENV=production
+ENV MCP_PORT=604
+ENV DATABASE_URL=/app/data/quotes.db
+
+EXPOSE 604
+
+CMD ["npm", "--prefix", "src/mcp-server", "run", "start"]

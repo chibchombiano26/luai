@@ -1,0 +1,16 @@
+.git
+.gitignore
+.next
+node_modules
+coverage
+coverage-*
+test-results
+dist
+*.log
+*.local
+.env
+.env.*
+quotes.db
+ops/node-red/runtime-data
+html/assets
+

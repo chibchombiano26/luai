@@ -1,0 +1,107 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Bogota}
+      POSTGRES_DB: ${POSTGRES_DB:-luai}
+      POSTGRES_USER: ${POSTGRES_USER:-luai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-luai_dev_password}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-luai} -d ${POSTGRES_DB:-luai}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  luai:
+    env_file:
+      - path: docker.runtime.env
+        required: false
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        FLOW_PACKS_DIR: ${FLOW_PACKS_DIR:-flow-packs}
+        FLOW_PACK_PACKAGES: ${FLOW_PACK_PACKAGES:-}
+        PUBLIC_FLOW_PACK_PACKAGES: ${PUBLIC_FLOW_PACK_PACKAGES:-}
+        NODE_AUTH_TOKEN: ${NODE_AUTH_TOKEN:-}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-}
+        APP_URL_OVERRIDE: ${APP_URL_OVERRIDE:-}
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:-}
+        CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:-}
+        CLERK_AUTH_ENABLED: ${CLERK_AUTH_ENABLED:-}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      TZ: ${TZ:-America/Bogota}
+      PORT: 3000
+      DATABASE_URL: /app/data/quotes.db
+      POSTGRES_URL: ${POSTGRES_URL:-postgresql://${POSTGRES_USER:-luai}:${POSTGRES_PASSWORD:-luai_dev_password}@postgres:5432/${POSTGRES_DB:-luai}}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      APP_URL_OVERRIDE: ${APP_URL_OVERRIDE}
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:-}
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:-}
+      CLERK_AUTH_ENABLED: ${CLERK_AUTH_ENABLED:-}
+      BASIC_AUTH_ENABLED: ${BASIC_AUTH_ENABLED:-false}
+      BASIC_AUTH_USERNAME: ${BASIC_AUTH_USERNAME:-}
+      BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:-}
+      DEBUG_OUTBOUND_CURLS: ${DEBUG_OUTBOUND_CURLS:-false}
+      DEBUG_OUTBOUND_HTTP_DETAILS: ${DEBUG_OUTBOUND_HTTP_DETAILS:-false}
+      OUTBOUND_HTTP_DEBUG_MAX_BODY_CHARS: ${OUTBOUND_HTTP_DEBUG_MAX_BODY_CHARS:-2000}
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "6001:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/api/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  flow-pack-mcp:
+    env_file:
+      - path: docker.runtime.env
+        required: false
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+      args:
+        FLOW_PACKS_DIR: ${FLOW_PACKS_DIR:-flow-packs}
+        FLOW_PACK_PACKAGES: ${FLOW_PACK_PACKAGES:-}
+        PUBLIC_FLOW_PACK_PACKAGES: ${PUBLIC_FLOW_PACK_PACKAGES:-}
+        NODE_AUTH_TOKEN: ${NODE_AUTH_TOKEN:-}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      TZ: ${TZ:-America/Bogota}
+      MCP_PORT: ${MCP_PORT:-604}
+      DATABASE_URL: /app/data/quotes.db
+      POSTGRES_URL: ${POSTGRES_URL:-postgresql://${POSTGRES_USER:-luai}:${POSTGRES_PASSWORD:-luai_dev_password}@postgres:5432/${POSTGRES_DB:-luai}}
+      DEBUG_OUTBOUND_CURLS: ${DEBUG_OUTBOUND_CURLS:-false}
+      DEBUG_OUTBOUND_HTTP_DETAILS: ${DEBUG_OUTBOUND_HTTP_DETAILS:-false}
+      OUTBOUND_HTTP_DEBUG_MAX_BODY_CHARS: ${OUTBOUND_HTTP_DEBUG_MAX_BODY_CHARS:-2000}
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "6604:604"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:604/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  postgres-data:

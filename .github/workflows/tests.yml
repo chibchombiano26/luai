@@ -1,0 +1,109 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vitest:
+    name: Run tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: read
+    env:
+      FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: "@chibchombiano26"
+
+      - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN != '' && secrets.GH_PACKAGES_TOKEN || github.token }}
+        run: npm ci
+
+      - name: Generate flow-pack registry
+        env:
+          FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
+          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN != '' && secrets.GH_PACKAGES_TOKEN || github.token }}
+        run: npm run build:flow-packs
+
+      - name: Run test suite
+        env:
+          CI: "true"
+          FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
+        run: npm test
+
+  coverage:
+    name: Run coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: read
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: "@chibchombiano26"
+
+      - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN != '' && secrets.GH_PACKAGES_TOKEN || github.token }}
+        run: npm ci
+
+      - name: Generate flow-pack registry
+        env:
+          FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
+          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN != '' && secrets.GH_PACKAGES_TOKEN || github.token }}
+        run: npm run build:flow-packs
+
+      - name: Run coverage
+        env:
+          CI: "true"
+          FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
+        run: npm run test:coverage
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-core
+          path: coverage/
+          if-no-files-found: ignore
+
+      - name: Upload coverage to Codecov
+        if: ${{ success() && env.CODECOV_TOKEN != '' }}
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ env.CODECOV_TOKEN }}
+          slug: chibchombiano26/luai
+          files: ./coverage/core/lcov.info
+          flags: core
+          name: core-coverage
+          verbose: true
+          fail_ci_if_error: true

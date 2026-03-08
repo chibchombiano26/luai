@@ -1,0 +1,57 @@
+{
+  "id": "template_card",
+  "packId": "template",
+  "kind": "native",
+  "adapter": "template_adapter",
+  "order": 10,
+  "category": "template",
+  "defaultEnabled": true,
+  "toolId": "run_template_card",
+  "supportedToolIds": ["run_template_card"],
+  "name": {
+    "es": "Card de ejemplo",
+    "en": "Example card"
+  },
+  "description": {
+    "es": "Card base para crear un nuevo pack.",
+    "en": "Starter card for building a new pack."
+  },
+  "systemPromptByLocale": {
+    "es": "Usa run_template_card para ejecutar este flujo de ejemplo.",
+    "en": "Use run_template_card to execute this example flow."
+  },
+  "commands": [
+    {
+      "id": "template_card",
+      "toolId": "run_template_card",
+      "order": 10,
+      "includeInMenu": true,
+      "iconKey": "sparkles",
+      "name": {
+        "es": "Comando de ejemplo",
+        "en": "Example command"
+      },
+      "description": {
+        "es": "Dispara el flujo de ejemplo",
+        "en": "Trigger the example flow"
+      },
+      "category": {
+        "es": "Template",
+        "en": "Template"
+      },
+      "example": {
+        "es": "/ejemplo",
+        "en": "/example"
+      },
+      "prompt": {
+        "es": "Ejecuta el flujo de ejemplo",
+        "en": "Run the example flow"
+      },
+      "aliases": {
+        "es": ["ejemplo"],
+        "en": ["example"]
+      }
+    }
+  ]
+}
+

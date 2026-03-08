@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LuAI | Turn AI Workflows Into Products</title>
+    <meta
+      name="description"
+      content="LuAI helps teams turn AI workflows into product-ready experiences with a reusable Next.js host and composable flow-packs."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./landing.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
+    <script defer src="./landing.js"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <nav class="topbar">
+          <div class="eyebrow">LuAI · Product-ready foundation for AI workflows</div>
+          <a
+            class="repo-link"
+            href="https://github.com/chibchombiano26/luai"
+            target="_blank"
+            rel="noreferrer"
+          >
+            View on GitHub
+          </a>
+        </nav>
+
+        <div class="hero-grid">
+          <section class="hero-copy">
+            <p class="kicker">From AI prototype to product launch</p>
+            <h1>Ship AI workflow products faster.</h1>
+            <p class="summary">
+              LuAI gives teams the product layer they usually rebuild from scratch: a reusable host,
+              workflow-ready UX, and modular <span class="inline-code">flow-packs</span> for shipping
+              structured AI experiences without starting over every time.
+            </p>
+
+            <div class="hero-actions">
+              <a class="button button-primary" href="#try-it">Start in 2 minutes</a>
+              <a
+                class="button button-secondary"
+                href="https://github.com/chibchombiano26/luai/archive/refs/heads/main.zip"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Download the repo
+              </a>
+              <a class="button button-secondary" href="#use-cases">See use cases</a>
+            </div>
+
+            <ul class="hero-points">
+              <li>Reuse one foundation across multiple AI products.</li>
+              <li>Add workflows without rebuilding the platform.</li>
+              <li>Start from working code, not a blank repo.</li>
+            </ul>
+
+            <div class="badge-row" aria-label="Repository metrics">
+              <img
+                src="https://img.shields.io/github/last-commit/chibchombiano26/luai?style=for-the-badge&amp;label=Last%20Commit&amp;color=1d4ed8"
+                alt="Last commit"
+              />
+            </div>
+          </section>
+
+          <aside class="hero-panel reveal">
+            <p class="panel-label">Why teams try it</p>
+            <div class="hero-proof-grid">
+              <article class="proof-card reveal-item">
+                <strong>Faster starts</strong>
+                <span>Skip rebuilding the host layer for every new AI workflow product.</span>
+              </article>
+              <article class="proof-card reveal-item">
+                <strong>Cleaner scaling</strong>
+                <span>Keep domains isolated in packs instead of entangling everything in the core.</span>
+              </article>
+              <article class="proof-card reveal-item">
+                <strong>Real codebase</strong>
+                <span>Explore a public pack, generated runtime wiring, and a reusable pack template.</span>
+              </article>
+              <article class="proof-card reveal-item">
+                <strong>Quick evaluation</strong>
+                <span>Run it locally in minutes and decide whether the architecture fits your team.</span>
+              </article>
+            </div>
+            <div class="hero-terminal reveal-item">
+              <div class="terminal-dots" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <pre><code>npm install
+cp .env.example .env
+npm run dev
+
+open http://localhost:600</code></pre>
+            </div>
+          </aside>
+        </div>
+      </header>
+
+      <nav class="floating-nav" aria-label="Section navigation">
+        <a class="floating-nav-link" href="#demo" data-nav-link="demo">Demo</a>
+        <a class="floating-nav-link" href="#why-it-matters" data-nav-link="why-it-matters">Problem</a>
+        <a class="floating-nav-link" href="#capabilities" data-nav-link="capabilities">Capabilities</a>
+        <a class="floating-nav-link" href="#compare" data-nav-link="compare">Compare</a>
+        <a class="floating-nav-link" href="#use-cases" data-nav-link="use-cases">Use Cases</a>
+        <a class="floating-nav-link" href="#proof" data-nav-link="proof">Proof</a>
+        <a class="floating-nav-link" href="#download" data-nav-link="download">Why Download</a>
+        <a class="floating-nav-link" href="#technical" data-nav-link="technical">Tech</a>
+        <a class="floating-nav-link" href="#developers" data-nav-link="developers">Developers</a>
+        <a class="floating-nav-link" href="#try-it" data-nav-link="try-it">Try</a>
+      </nav>
+
+      <main>
+        <section id="demo" class="section reveal">
+          <div class="section-heading reveal-item">
+            <p class="kicker">Real product screenshot</p>
+            <h2>What the app actually looks like when it runs.</h2>
+            <p class="section-copy">
+              This is a real capture from the running LuAI app, not a mockup. It gives visitors an
+              immediate sense of the product surface behind the architecture.
+            </p>
+          </div>
+
+          <div class="app-shot-frame reveal-item">
+            <img
+              class="app-shot-image"
+              src="./luai-app-preview.png"
+              alt="Screenshot of the running LuAI application"
+            />
+          </div>
+        </section>
+
+        <section id="why-it-matters" class="section reveal">
+          <div class="section-heading reveal-item">
+            <p class="kicker">Why it matters</p>
+            <h2>Most AI teams do not need another demo. They need a product foundation.</h2>
+            <p class="section-copy">
+              The hard part is not getting text out of a model. The hard part is turning AI behavior
+              into something users can trust, teams can extend, and products can ship. LuAI gives you
+              the layer between raw model output and a repeatable workflow product.
+            </p>
+          </div>
+
+          <div class="comparison-grid">
+            <article class="detail-card reveal-item">
+              <p class="panel-label">What usually happens</p>
+              <ul class="bullet-list">
+                <li>Every promising workflow starts as another rushed prototype.</li>
+                <li>The same platform work gets rebuilt for every new product idea.</li>
+                <li>Domain logic leaks into the core and velocity drops as complexity rises.</li>
+                <li>The team ships a demo, then has to rebuild it properly later.</li>
+              </ul>
+            </article>
+            <article class="detail-card reveal-item">
+              <p class="panel-label">What LuAI changes</p>
+              <ul class="bullet-list">
+                <li>One host app absorbs the repeated platform work once.</li>
+                <li>Each new domain lives in a pack with its own commands, tools, prompts, and UI.</li>
+                <li>Integrations stay explicit through build-time generation instead of runtime magic.</li>
+                <li>You get a cleaner path from experiment to reusable product line.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="capabilities" class="section reveal">
+          <div class="section-heading reveal-item">
+            <p class="kicker">Core capabilities</p>
+            <h2>What makes this worth trying.</h2>
+          </div>
+
+          <div class="artifact-grid">
+            <article class="feature-card reveal-item">
+              <h3>One foundation, multiple product directions</h3>
+              <p>
+                The host already covers the app shell, chat runtime, auth integration, admin pages,
+                middleware, persistence, and shared platform utilities.
+              </p>
+            </article>
+            <article class="feature-card reveal-item">
+              <h3>New workflows without core rewrites</h3>
+              <p>
+                New domains can be packaged as isolated flow-packs with their own cards, prompts,
+                tools, UI, optional public pages, optional APIs, and optional MCP startup.
+              </p>
+            </article>
+            <article class="feature-card reveal-item">
+              <h3>Scale without losing clarity</h3>
+              <p>
+                Build-time registry generation keeps integrations explicit, so you are not relying on
+                hidden runtime wiring.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section id="compare" class="section reveal">
+          <div class="section-heading reveal-item">
+            <p class="kicker">Comparison</p>
+            <h2>How LuAI compares to common starting points.</h2>
+          </div>
+
+          <div class="comparison-table reveal-item">
+            <div class="comparison-row comparison-head">
+              <div>Option</div>
+              <div>Speed to first product</div>
+              <div>Reusable workflow architecture</div>
+              <div>Built-in platform layer</div>
+            </div>
+            <div class="comparison-row">
+              <div>Blank Next.js app</div>
+              <div>Low</div>
+              <div>None by default</div>
+              <div>No</div>
+            </div>
+            <div class="comparison-row">
+              <div>Generic AI starter</div>
+              <div>Medium</div>
+              <div>Usually shallow</div>
+              <div>Partial</div>
+            </div>
+            <div class="comparison-row comparison-highlight">
+              <div>LuAI</div>
+              <div>High</div>
+              <div>Pack-based and extendable</div>
+              <div>Yes</div>
+            </div>
+          </div>
+        </section>
+
+        <section id="use-cases" class="section reveal">
+          <div class="section-heading reveal-item">
+            <p class="kicker">Use cases</p>
+            <h2>Designed for structured AI experiences.</h2>
+            <p class="section-copy">
+              LuAI fits best when the workflow matters as much as the answer and the surrounding
+              product experience cannot be an afterthought.
+            </p>
+          </div>
+
+          <div class="use-case-grid">
+            <article class="feature-card reveal-item">
+              <h3>Internal assistants</h3>
+              <p>Build guided tools for ops, sales, underwriting, support, or internal knowledge work.</p>
+            </article>
+            <article class="feature-card reveal-item">
+              <h3>Intake and qualification</h3>
+              <p>Turn structured data collection into reusable AI-driven business flows.</p>
+            </article>
+            <article class="feature-card reveal-item">
+              <h3>Support copilots</h3>
+              <p>Combine commands, prompts, and UI cards into domain-specific support products.</p>
+            </article>
+            <article class="feature-card reveal-item">
+              <h3>Onboarding journeys</h3>
+              <p>Design multi-step conversations for setup, qualification, onboarding, or intake.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="proof" class="section reveal">
+          <div class="section-heading reveal-item">
+            <p class="kicker">What you can inspect right now</p>
+            <h2>There is real substance behind the pitch.</h2>
+          </div>
+
+          <div class="pack-grid">
+            <article class="detail-card reveal-item">
+              <p class="panel-label">Weather pack</p>
+              <h3>A public workflow example that shows the model, UI, and product layer working together.</h3>
+              <ul class="bullet-list">
+                <li>Open-Meteo-backed forecast logic.</li>
+                <li>Pack-level UI rendering and configurable defaults.</li>
+                <li>A smaller, easier-to-read reference implementation.</li>
+                <li>
+                  Explore:
+                  <a
+                    href="https://github.com/chibchombiano26/luai/tree/main/flow-packs/weather"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <span class="inline-code">flow-packs/weather/</span>
+                  </a>
+                </li>
+              </ul>
+            </article>
+            <article class="detail-card reveal-item">
+              <p class="panel-label">Starter template</p>
+              <h3>Use the pack template to spin up a new workflow domain faster.</h3>
+              <ul class="bullet-list">
+                <li>Includes pack structure, sample card manifest, server module, and UI entrypoint.</li>
+                <li>Good starting point if you want to adapt LuAI to your own industry or product idea.</li>
+                <li>Lets you learn the pack contract by modifying working scaffolding.</li>
+                <li>
+                  Explore:
+                  <a
+                    href="https://github.com/chibchombiano26/luai/tree/main/examples/flow-pack-template"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <span class="inline-code">examples/flow-pack-template/</span>
+                  </a>
+                </li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="download" class="section two-column reveal">
+          <div class="reveal-item">
+            <p class="kicker">Why download it</p>
+            <h2>Stronger than starting from scratch.</h2>
+            <ul class="bullet-list">
+              <li>Use it as the base layer for your next AI workflow product.</li>
+              <li>Learn a modular host-and-pack architecture from a real codebase.</li>
+              <li>Skip the repetitive setup work around auth, chat, settings, and admin.</li>
+              <li>Validate the approach before committing to a longer build cycle.</li>
+              <li>Extend the public example pack or launch your own from the template.</li>
+            </ul>
+          </div>
+
+          <div class="code-card reveal-item">
+            <div class="code-card-header">
+              <p class="panel-label">Quick start</p>
+              <button class="copy-button" type="button" data-copy-target="quickstart-code">
+                Copy
+              </button>
+            </div>
+            <pre><code id="quickstart-code">Requirements
+  Node.js 20+
+  npm 10+
+
+Install
+  npm install
+  cp .env.example .env
+
+Run
+  npm run dev
+
+Optional
+  npm run dev:noauth</code></pre>
+          </div>
+        </section>
+
+        <section id="technical" class="section reveal">
+          <div class="section-heading reveal-item">
+            <p class="kicker">Technical credibility</p>
+            <h2>This is opinionated, but it is not hand-wavy.</h2>
+            <p class="section-copy">
+              LuAI scans packs, validates manifests, resolves optional modules, and generates static
+              mount files for the host application during build. That gives you extensibility without
+              losing visibility into how the app is wired.
+            </p>
+          </div>
+
+          <div class="artifact-grid">
+            <article class="feature-card reveal-item">
+              <h3>Generation script</h3>
+              <p>
+                The integration flow is driven by
+                <a
+                  href="https://github.com/chibchombiano26/luai/blob/main/scripts/build-flow-pack-registry.mjs"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span class="inline-code">scripts/build-flow-pack-registry.mjs</span>
+                </a>
+                .
+              </p>
+            </article>
+            <article class="feature-card reveal-item">
+              <h3>Generated registries</h3>
+              <p>
+                Build output includes generated pack, server, UI, and MCP registries under
+                <span class="inline-code">src/lib/platform/</span> and
+                <span class="inline-code">src/mcp-server/</span>.
+              </p>
+            </article>
+            <article class="feature-card reveal-item">
+              <h3>Composable contract</h3>
+              <p>
+                Packs can contribute cards, commands, tools, UI, public pages, public APIs, and MCP
+                modules while staying isolated from the host core.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section id="developers" class="section two-column reveal">
+          <div class="reveal-item">
+            <p class="kicker">For developers</p>
+            <h2>Read the docs before you wire your first pack.</h2>
+            <p class="section-copy">
+              LuAI includes a GitBook with architecture notes, runbooks, setup guidance, and generated
+              API reference. It is the fastest way to understand how the host, packs, and build-time
+              registries fit together.
+            </p>
+            <ul class="bullet-list">
+              <li>Architecture and request lifecycle.</li>
+              <li>GitBook setup, local development, and publishing runbooks.</li>
+              <li>Generated API reference for host utilities and hooks.</li>
+            </ul>
+          </div>
+
+          <div class="code-card reveal-item">
+            <div class="code-card-header">
+              <p class="panel-label">Developer docs</p>
+            </div>
+            <p class="section-copy">
+              Open the public documentation portal for the full technical guide.
+            </p>
+            <div class="cta-stack">
+              <a
+                class="button button-primary"
+                href="https://luai.gitbook.io/luai"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open GitBook
+              </a>
+              <a
+                class="button button-secondary"
+                href="https://github.com/chibchombiano26/luai/tree/main/docs"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Browse docs in GitHub
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section id="try-it" class="section publish-strip reveal">
+          <div class="reveal-item">
+            <p class="kicker">Try it now</p>
+            <h2>Clone it, run it, and see if this should become your next AI product foundation.</h2>
+          </div>
+          <div class="cta-stack reveal-item">
+            <a
+              class="button button-primary"
+              href="https://github.com/chibchombiano26/luai"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Open the repository
+            </a>
+            <a
+              class="button button-secondary"
+              href="https://github.com/chibchombiano26/luai/archive/refs/heads/main.zip"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Download the source
+            </a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>LuAI is a product foundation for teams shipping structured AI workflow experiences.</p>
+        <a
+          href="https://github.com/chibchombiano26/luai"
+          target="_blank"
+          rel="noreferrer"
+        >
+          github.com/chibchombiano26/luai
+        </a>
+      </footer>
+    </div>
+  </body>
+</html>
