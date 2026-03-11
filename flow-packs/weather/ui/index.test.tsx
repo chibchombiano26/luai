@@ -1,7 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { renderers } from './index';
+import { adminPages, profileWidgets, renderers } from './index';
 import type { ChatToolMessage } from '@/lib/chatHistory';
+
+vi.mock('./components/WeatherAdminPanel', () => ({
+  WeatherAdminPanel: ({ locale }: { locale: 'es' | 'en' }) => <div>{`admin-${locale}`}</div>,
+}));
+
+vi.mock('./components/WeatherProfileWidget', () => ({
+  WeatherProfileWidget: ({ locale }: { locale: 'es' | 'en' }) => <div>{`profile-${locale}`}</div>,
+}));
 
 function createToolMessage(type: ChatToolMessage['type']): ChatToolMessage {
   return {
@@ -67,5 +75,26 @@ describe('weather ui pack', () => {
     );
 
     expect(container.firstChild).toBeNull();
+  });
+
+  it('registers weather admin and profile extensions', () => {
+    const AdminPage = adminPages[0].Component;
+    const ProfileWidget = profileWidgets[0].Component;
+
+    expect(adminPages[0]).toMatchObject({
+      id: 'weather-admin',
+      slug: 'weather',
+      order: 30,
+    });
+    expect(profileWidgets[0]).toMatchObject({
+      id: 'weather-preferences',
+      order: 30,
+    });
+
+    render(<AdminPage locale="en" />);
+    render(<ProfileWidget locale="es" profile={{} as never} usage={{} as never} />);
+
+    expect(screen.getByText('admin-en')).toBeInTheDocument();
+    expect(screen.getByText('profile-es')).toBeInTheDocument();
   });
 });

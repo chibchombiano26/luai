@@ -1,0 +1,60 @@
+{
+  "id": "pokemon_lookup",
+  "packId": "pokemon",
+  "kind": "native",
+  "adapter": "pokemon_lookup",
+  "order": 50,
+  "category": "pokemon",
+  "defaultEnabled": true,
+  "replacePreviousByCardId": true,
+  "toolId": "show_pokemon_lookup",
+  "langflowEndpoint": "/pokemon/lookup",
+  "supportedToolIds": [
+    "show_pokemon_lookup"
+  ],
+  "name": {
+    "es": "Pokemon",
+    "en": "Pokemon"
+  },
+  "description": {
+    "es": "Consulta informacion de un Pokemon por nombre o numero de la Pokedex.",
+    "en": "Look up Pokemon information by name or Pokedex number."
+  },
+  "systemPromptByLocale": {
+    "es": "FLUJO: Pokemon (pokemon_lookup)\n- Usa show_pokemon_lookup cuando el usuario pida informacion de un Pokemon por nombre o numero.\n- Si el usuario pide un solo Pokemon, consulta exactamente uno.\n- No arrastres ni repitas Pokemon de turnos anteriores.\n- No hagas una segunda consulta con otro Pokemon salvo que el usuario pida comparar o mencione explicitamente mas de uno.\n- Acepta nombres comunes como pikachu, charizard o mew y numeros de Pokedex como 25 o 150.\n- Devuelve el card del Pokemon con sus tipos, habilidades y estadisticas principales.",
+    "en": "FLOW: Pokemon (pokemon_lookup)\n- Use show_pokemon_lookup when the user asks for Pokemon information by name or number.\n- If the user asks for a single Pokemon, fetch exactly one.\n- Do not carry over or repeat Pokemon from previous turns.\n- Do not make a second lookup for another Pokemon unless the user explicitly asks to compare or mentions more than one.\n- Accept common names such as pikachu, charizard, or mew and Pokedex numbers such as 25 or 150.\n- Return the Pokemon card with types, abilities, and key stats."
+  },
+  "commands": [
+    {
+      "id": "pokemon_lookup",
+      "toolId": "show_pokemon_lookup",
+      "order": 50,
+      "includeInMenu": true,
+      "iconKey": "sparkles",
+      "name": {
+        "es": "Buscar Pokemon",
+        "en": "Pokemon Lookup"
+      },
+      "description": {
+        "es": "Consultar un Pokemon por nombre o numero",
+        "en": "Look up a Pokemon by name or number"
+      },
+      "category": {
+        "es": "Pokemon",
+        "en": "Pokemon"
+      },
+      "example": {
+        "es": "/pokemon pikachu",
+        "en": "/pokemon pikachu"
+      },
+      "prompt": {
+        "es": "Muestrame informacion de un Pokemon",
+        "en": "Show me information about a Pokemon"
+      },
+      "aliases": {
+        "es": ["pokemon", "pokedex", "pikachu", "bulbasaur"],
+        "en": ["pokemon", "pokedex", "pikachu", "charizard"]
+      }
+    }
+  ]
+}

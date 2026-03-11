@@ -109,7 +109,7 @@ describe('flow-pack MCP registry', () => {
     expect(GENERATED_FLOW_PACK_MCP_MODULES.length).toBeGreaterThan(0);
     expect(GENERATED_FLOW_PACK_MCP_MODULES[0]?.module.tools?.length).toBeGreaterThan(0);
     expect(GENERATED_FLOW_PACK_MCP_MODULES.map((entry) => entry.packId)).toEqual(
-      expect.arrayContaining(['insurance', 'markets', 'weather'])
+      expect.arrayContaining(['insurance', 'markets', 'weather', 'pokemon'])
     );
   });
 

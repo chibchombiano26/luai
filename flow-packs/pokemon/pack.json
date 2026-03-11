@@ -1,0 +1,19 @@
+{
+  "id": "pokemon",
+  "name": "Pokemon lookup",
+  "version": "1.0.0",
+  "description": "Public Pokemon lookup flows backed by PokeAPI.",
+  "mcp": {
+    "module": "mcp/index.ts"
+  },
+  "admin": {
+    "cardOptions": {
+      "pokemon_lookup": {
+        "configPlaceholder": {
+          "es": "{\n  \"lang\": \"es\"\n}",
+          "en": "{\n  \"lang\": \"en\"\n}"
+        }
+      }
+    }
+  }
+}

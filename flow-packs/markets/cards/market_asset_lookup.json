@@ -6,6 +6,7 @@
   "order": 40,
   "category": "markets",
   "defaultEnabled": true,
+  "replacePreviousByCardId": true,
   "toolId": "show_market_asset",
   "langflowEndpoint": "/markets/assets",
   "supportedToolIds": [

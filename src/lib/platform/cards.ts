@@ -24,6 +24,7 @@ export interface FlowCardDefinition {
     en: string;
   };
   defaultEnabled: boolean;
+  replacePreviousByCardId?: boolean;
   toolId: string;
   supportedToolIds: readonly string[];
   langflowEndpoint?: string;
@@ -56,6 +57,14 @@ export function getFlowCardDefinition(cardId: FlowCardId): FlowCardDefinition {
     throw new Error(`Unknown flow card id: ${cardId}`);
   }
   return card;
+}
+
+export function shouldReplacePreviousDynamicCard(cardId: string): boolean {
+  if (!isFlowCardId(cardId)) {
+    return false;
+  }
+
+  return Boolean(getFlowCardDefinition(cardId).replacePreviousByCardId);
 }
 
 export function resolveFlowCardStatus(settings: FlowCardSettings): FlowCardWithStatus[] {

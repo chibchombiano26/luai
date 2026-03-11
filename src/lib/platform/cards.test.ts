@@ -5,6 +5,7 @@ import {
   isFlowCardId,
   resolveFlowCardStatus,
   sanitizeFlowCardSettings,
+  shouldReplacePreviousDynamicCard,
   toEnabledFlowCardIdSet,
   toFlowCardConfigById,
 } from './cards';
@@ -28,6 +29,13 @@ describe('platform cards', () => {
     expect(() =>
       getFlowCardDefinition('missing_card' as never)
     ).toThrow('Unknown flow card id');
+  });
+
+  it('flags cards that should replace previous dynamic cards in the same turn', () => {
+    expect(shouldReplacePreviousDynamicCard('market_asset_lookup')).toBe(true);
+    expect(shouldReplacePreviousDynamicCard('pokemon_lookup')).toBe(true);
+    expect(shouldReplacePreviousDynamicCard('weather_forecast')).toBe(false);
+    expect(shouldReplacePreviousDynamicCard('missing_card')).toBe(false);
   });
 
   it('resolves card status with defaults and overrides', () => {

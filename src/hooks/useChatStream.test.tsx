@@ -220,4 +220,90 @@ describe('useChatStream', () => {
       }),
     ]);
   });
+
+  it('replaces duplicate pokemon cards from the current turn using card metadata', async () => {
+    const setMessages = vi.fn();
+    const setToolMessages = vi.fn();
+    let now = 200;
+    vi.spyOn(Date, 'now').mockImplementation(() => now++);
+
+    const chunks = [
+      'data: {"type":"tool","toolType":"dynamic_card","data":{"cardId":"pokemon_lookup","title":"Pikachu"}}\n',
+      'data: {"type":"tool","toolType":"dynamic_card","data":{"cardId":"pokemon_lookup","title":"Charizard"}}\n',
+    ];
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        body: {
+          getReader: () => {
+            let index = 0;
+            return {
+              read: vi.fn().mockImplementation(async () => {
+                if (index >= chunks.length) {
+                  return { done: true, value: undefined };
+                }
+
+                const value = new TextEncoder().encode(chunks[index]);
+                index += 1;
+                return { done: false, value };
+              }),
+            };
+          },
+        },
+      })
+    );
+
+    const { result } = renderHook(() =>
+      useChatStream({
+        locale: 'es',
+        activeSessionId: 'session-1',
+        messages: [],
+        setMessages,
+        toolMessages: [],
+        setToolMessages,
+        enabledCommandIds: [],
+      })
+    );
+
+    await act(async () => {
+      await result.current.submitCurrentMessage('charizard', null);
+    });
+
+    const replacePokemonCard = setToolMessages.mock.calls.at(-1)?.[0] as
+      | ((toolMessages: Array<{ type: string; data: Record<string, unknown>; timestamp: number; id: string }>) => unknown)
+      | undefined;
+
+    expect(
+      replacePokemonCard?.([
+        {
+          id: 'tool-pikachu-previous-turn',
+          type: 'dynamic_card',
+          data: { cardId: 'pokemon_lookup', title: 'Pikachu' },
+          timestamp: 1,
+        },
+        {
+          id: 'tool-pikachu-current-turn',
+          type: 'dynamic_card',
+          data: { cardId: 'pokemon_lookup', title: 'Pikachu' },
+          timestamp: 202,
+        },
+      ])
+    ).toEqual([
+      expect.objectContaining({
+        id: 'tool-pikachu-previous-turn',
+        data: expect.objectContaining({
+          cardId: 'pokemon_lookup',
+          title: 'Pikachu',
+        }),
+      }),
+      expect.objectContaining({
+        data: expect.objectContaining({
+          cardId: 'pokemon_lookup',
+          title: 'Charizard',
+        }),
+      }),
+    ]);
+  });
 });

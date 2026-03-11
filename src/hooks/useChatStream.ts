@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { AppLocale } from '@/lib/i18n';
 import { ChatMessage, ChatToolMessage, normalizeChatToolType } from '@/lib/chatHistory';
 import { ChatCommandId, resolveSlashCommandInput } from '@/lib/chat/commands';
+import { shouldReplacePreviousDynamicCard } from '@/lib/platform/cards';
 import {
   asRecord,
   buildCommandMessage,
@@ -45,13 +46,13 @@ export function useChatStream({
     setToolMessages((prev) => {
       if (
         nextTool.type === 'dynamic_card' &&
-        nextTool.data.cardId === 'market_asset_lookup'
+        shouldReplacePreviousDynamicCard(nextTool.data.cardId)
       ) {
         return [
           ...prev.filter(
             (tool) =>
               tool.type !== 'dynamic_card' ||
-              tool.data.cardId !== 'market_asset_lookup' ||
+              tool.data.cardId !== nextTool.data.cardId ||
               currentRequestStartedAt === null ||
               tool.timestamp < currentRequestStartedAt
           ),
