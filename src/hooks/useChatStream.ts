@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { AppLocale } from '@/lib/i18n';
 import { ChatMessage, ChatToolMessage, normalizeChatToolType } from '@/lib/chatHistory';
 import { ChatCommandId, resolveSlashCommandInput } from '@/lib/chat/commands';
@@ -34,13 +34,53 @@ export function useChatStream({
   const [hasStreamingText, setHasStreamingText] = useState(false);
   const [apiProgressMessage, setApiProgressMessage] = useState<string | null>(null);
   const activeRequestAbortControllerRef = useRef<AbortController | null>(null);
+  const latestMessagesRef = useRef(messages);
+  const latestToolMessagesRef = useRef(toolMessages);
+  const currentToolRequestStartedAtRef = useRef<number | null>(null);
+  const isLoadingRef = useRef(false);
   const t = CHAT_COPY[locale];
+
+  const appendToolMessage = useCallback((nextTool: ChatToolMessage) => {
+    const currentRequestStartedAt = currentToolRequestStartedAtRef.current;
+    setToolMessages((prev) => {
+      if (
+        nextTool.type === 'dynamic_card' &&
+        nextTool.data.cardId === 'market_asset_lookup'
+      ) {
+        return [
+          ...prev.filter(
+            (tool) =>
+              tool.type !== 'dynamic_card' ||
+              tool.data.cardId !== 'market_asset_lookup' ||
+              currentRequestStartedAt === null ||
+              tool.timestamp < currentRequestStartedAt
+          ),
+          nextTool,
+        ];
+      }
+
+      return [...prev, nextTool];
+    });
+  }, [setToolMessages]);
+
+  useEffect(() => {
+    latestMessagesRef.current = messages;
+  }, [messages]);
+
+  useEffect(() => {
+    latestToolMessagesRef.current = toolMessages;
+  }, [toolMessages]);
+
+  useEffect(() => {
+    isLoadingRef.current = isLoading;
+  }, [isLoading]);
 
   const cancelCurrentRequest = useCallback(() => {
     const controller = activeRequestAbortControllerRef.current;
     if (!controller) return;
     controller.abort();
     activeRequestAbortControllerRef.current = null;
+    isLoadingRef.current = false;
     setIsLoading(false);
     setHasStreamingText(false);
     setApiProgressMessage(null);
@@ -55,8 +95,9 @@ export function useChatStream({
         : input
     ).trim();
 
-    if (isLoading || !userInput) return;
+    if (isLoadingRef.current || !userInput) return;
 
+    isLoadingRef.current = true;
     setIsLoading(true);
     setHasStreamingText(false);
     setApiProgressMessage(null);
@@ -73,7 +114,9 @@ export function useChatStream({
         content: userInput,
         timestamp: Date.now(),
       };
-      const updatedMessages = [...messages, userMessage];
+      currentToolRequestStartedAtRef.current = userMessage.timestamp;
+      const updatedMessages = [...latestMessagesRef.current, userMessage];
+      latestMessagesRef.current = updatedMessages;
       setMessages(updatedMessages);
 
       // Call API
@@ -85,7 +128,7 @@ export function useChatStream({
           locale,
           sessionId: activeSessionId,
           commandId: selectedCommandId,
-          hasQuoteContext: toolMessages.some(
+          hasQuoteContext: latestToolMessagesRef.current.some(
             (tm) =>
               tm.type === 'quote' ||
               tm.type === 'comparison'
@@ -124,13 +167,16 @@ export function useChatStream({
         setMessages((prev) => {
           const idx = prev.findIndex((m) => m.id === assistantMessageId);
           if (idx === -1) {
-            return [
+            const nextMessages: ChatMessage[] = [
               ...prev,
               { id: assistantMessageId, role: 'assistant', content: nextText, timestamp: assistantTimestamp },
             ];
+            latestMessagesRef.current = nextMessages;
+            return nextMessages;
           }
           const next = [...prev];
           next[idx] = { ...next[idx], content: nextText };
+          latestMessagesRef.current = next;
           return next;
         });
       };
@@ -159,7 +205,7 @@ export function useChatStream({
               data: nextToolData as ChatToolMessage['data'],
               timestamp: Date.now(),
             } as unknown as ChatToolMessage;
-            setToolMessages((prev) => [...prev, nextTool]);
+            appendToolMessage(nextTool);
           } else if (data.type === 'status') {
             if (data.status === 'start') {
               setApiProgressMessage(data.message || t.apiLookupInProgress);
@@ -192,10 +238,14 @@ export function useChatStream({
       }
 
       if (error instanceof Error && error.message === AUTH_REQUIRED_ERROR) {
-        setMessages((prev) => [
-          ...prev,
-          { id: Date.now().toString(), role: 'assistant', content: t.authRequired, timestamp: Date.now() },
-        ]);
+        setMessages((prev) => {
+          const nextMessages: ChatMessage[] = [
+            ...prev,
+            { id: Date.now().toString(), role: 'assistant', content: t.authRequired, timestamp: Date.now() },
+          ];
+          latestMessagesRef.current = nextMessages;
+          return nextMessages;
+        });
         return;
       }
 
@@ -203,19 +253,25 @@ export function useChatStream({
       const msg = error instanceof Error && error.message && !error.message.startsWith('API error:')
         ? error.message
         : t.errorProcessing;
-      setMessages((prev) => [
-        ...prev,
-        { id: Date.now().toString(), role: 'assistant', content: msg, timestamp: Date.now() },
-      ]);
+      setMessages((prev) => {
+        const nextMessages: ChatMessage[] = [
+          ...prev,
+          { id: Date.now().toString(), role: 'assistant', content: msg, timestamp: Date.now() },
+        ];
+        latestMessagesRef.current = nextMessages;
+        return nextMessages;
+      });
     } finally {
       if (activeRequestAbortControllerRef.current === abortController) {
         activeRequestAbortControllerRef.current = null;
+        currentToolRequestStartedAtRef.current = null;
+        isLoadingRef.current = false;
         setIsLoading(false);
         setHasStreamingText(false);
         setApiProgressMessage(null);
       }
     }
-  }, [locale, activeSessionId, messages, setMessages, toolMessages, setToolMessages, isLoading, t.apiLookupInProgress, t.authRequired, t.errorProcessing, enabledCommandIds]);
+  }, [locale, activeSessionId, setMessages, appendToolMessage, t.apiLookupInProgress, t.authRequired, t.errorProcessing, enabledCommandIds]);
 
   return {
     isLoading,

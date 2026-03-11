@@ -1,10 +1,24 @@
+import React, { forwardRef, useImperativeHandle } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatInput } from "./ChatInput";
 
 vi.mock("./SlashCommandMenu", () => ({
-  SlashCommandMenu: () => <div data-testid="slash-command-menu" />,
+  SlashCommandMenu: forwardRef((props: { onSelectCommand: (command: { id: string; name: string }) => void }, ref) => {
+    useImperativeHandle(ref, () => ({
+      handleKeyDown: (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (event.key !== "Enter") {
+          return false;
+        }
+        event.preventDefault();
+        props.onSelectCommand({ id: "weather_forecast", name: "Pronóstico del Clima" });
+        return true;
+      },
+    }));
+
+    return <div data-testid="slash-command-menu" />;
+  }),
 }));
 
 type SpeechRecognitionHandlers = {
@@ -186,7 +200,7 @@ describe("ChatInput", () => {
 
     const textarea = screen.getByPlaceholderText("Escribe tu mensaje aquí...");
     fireEvent.change(textarea, { target: { value: "nuevo" } });
-    fireEvent.keyDown(textarea, { key: "Enter" });
+    fireEvent.keyDown(textarea, { key: "A" });
     fireEvent.compositionStart(textarea);
     fireEvent.compositionEnd(textarea);
 
@@ -195,6 +209,21 @@ describe("ChatInput", () => {
     expect(props.onInputCompositionStart).toHaveBeenCalled();
     expect(props.onInputCompositionEnd).toHaveBeenCalled();
     expect(screen.getByTestId("slash-command-menu")).toBeInTheDocument();
+  });
+
+  it("routes Enter to the slash command menu when it handles the current input", () => {
+    const { props } = renderChatInput({
+      input: "/",
+    });
+
+    const textarea = screen.getByPlaceholderText("Escribe tu mensaje aquí...");
+    fireEvent.keyDown(textarea, { key: "Enter" });
+
+    expect(props.onSelectCommand).toHaveBeenCalledWith({
+      id: "weather_forecast",
+      name: "Pronóstico del Clima",
+    });
+    expect(props.onKeyDown).not.toHaveBeenCalled();
   });
 
 });

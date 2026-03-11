@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Building2,
@@ -17,6 +17,7 @@ import {
 } from '@/lib/chat/commands';
 import type {
   SlashCommandDefinition,
+  SlashCommandMenuHandle,
   SlashCommandMenuProps,
 } from '@/lib/chat/types';
 import { isFlowCardId, type FlowCardId } from '@/lib/platform/cards';
@@ -39,12 +40,12 @@ const COMMAND_ICONS: Record<string, LucideIcon> = {
   history: History,
 };
 
-export function SlashCommandMenu({
+export const SlashCommandMenu = forwardRef<SlashCommandMenuHandle, SlashCommandMenuProps>(function SlashCommandMenu({
   input,
   onSelectCommand,
   locale = 'es',
   enabledCommandIds,
-}: SlashCommandMenuProps) {
+}, ref) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
@@ -206,6 +207,21 @@ export function SlashCommandMenu({
     }
   };
 
+  useImperativeHandle(ref, () => ({
+    handleKeyDown(event) {
+      if (!isOpen || filteredCommands.length === 0) {
+        return false;
+      }
+
+      if (!['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(event.key)) {
+        return false;
+      }
+
+      handleKeyDown(event as unknown as React.KeyboardEvent);
+      return event.defaultPrevented;
+    },
+  }), [filteredCommands, isOpen, selectedIdx]);
+
   if (!isOpen || filteredCommands.length === 0) {
     return null;
   }
@@ -280,4 +296,4 @@ export function SlashCommandMenu({
       </div>
     </motion.div>
   );
-}
+});

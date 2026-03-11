@@ -29,6 +29,7 @@ export interface FlowPackChatRuntimeResult {
   earlyResponse?: Response | null;
   toolContext?: Partial<ToolContext>;
   streamFeedbackByToolId?: Record<string, FlowPackToolStreamFeedback>;
+  allowedToolIds?: string[];
 }
 
 export interface FlowPackChatModule {

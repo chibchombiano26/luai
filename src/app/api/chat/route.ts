@@ -153,19 +153,24 @@ export async function POST(req: Request) {
       messages,
       system: systemPrompt,
       abortSignal,
-      tools: getAgentTools({
-        isEnglish,
-        detectedPlate: flowPackRuntime.toolContext.detectedPlate ?? null,
-        abortSignal,
-        actorUserId: resolvedUserId,
-        enabledCardIds,
-        cardConfigById,
-        enabledComparisonProviderCodes: flowPackRuntime.toolContext.enabledComparisonProviderCodes,
-        enabledSingleProviderCodes: flowPackRuntime.toolContext.enabledSingleProviderCodes,
-        onQuoteGenerated: () => {
-          quotesGeneratedCount += 1;
+      tools: getAgentTools(
+        {
+          isEnglish,
+          detectedPlate: flowPackRuntime.toolContext.detectedPlate ?? null,
+          abortSignal,
+          actorUserId: resolvedUserId,
+          enabledCardIds,
+          cardConfigById,
+          enabledComparisonProviderCodes: flowPackRuntime.toolContext.enabledComparisonProviderCodes,
+          enabledSingleProviderCodes: flowPackRuntime.toolContext.enabledSingleProviderCodes,
+          onQuoteGenerated: () => {
+            quotesGeneratedCount += 1;
+          },
         },
-      }),
+        {
+          allowedToolIds: flowPackRuntime.allowedToolIds,
+        }
+      ),
     });
 
     // 4. Transform AI SDK stream to custom format

@@ -24,6 +24,7 @@ describe('resolveFlowPackChatRuntime', () => {
     });
 
     expect(result).toEqual({
+      allowedToolIds: null,
       earlyResponse: null,
       toolContext: {},
       streamFeedbackByToolId: {},

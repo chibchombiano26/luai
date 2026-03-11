@@ -113,4 +113,13 @@ describe('platform card system prompts', () => {
       })
     ).toBe(false);
   });
+
+  it('includes the single-asset safeguard in the market flow default prompt', () => {
+    expect(DEFAULT_CARD_SYSTEM_PROMPTS.market_asset_lookup.es).toContain(
+      'consulta exactamente un activo'
+    );
+    expect(DEFAULT_CARD_SYSTEM_PROMPTS.market_asset_lookup.en).toContain(
+      'fetch exactly one asset'
+    );
+  });
 });

@@ -162,4 +162,51 @@ describe("getDb", () => {
       expect.anything()
     );
   });
+
+  it("waits for a single shared initialization when sqlite is requested concurrently", async () => {
+    let releaseInitialization: (() => void) | null = null;
+    const initializationBarrier = new Promise<void>((resolve) => {
+      releaseInitialization = resolve;
+    });
+    const sqliteDb = {
+      get: vi.fn().mockResolvedValue(undefined),
+      all: vi.fn().mockImplementation(async (sql: string) => {
+        if (sql === "SELECT version FROM schema_migrations ORDER BY version") {
+          await initializationBarrier;
+          return [];
+        }
+        return [];
+      }),
+      run: vi.fn().mockResolvedValue({}),
+      exec: vi.fn().mockResolvedValue(undefined),
+    };
+    const open = vi.fn().mockResolvedValue(sqliteDb);
+
+    vi.doMock("@libsql/client", () => ({ createClient: vi.fn() }));
+    vi.doMock("sqlite", () => ({ open }));
+    vi.doMock("sqlite3", () => ({ default: { Database: "MockSqliteDriver" } }));
+    vi.doMock("@/lib/database-provider-config", () => ({
+      resolveActiveDatabaseConnectionConfig: vi.fn().mockResolvedValue({
+        provider: "sqlite",
+        source: "default",
+        sqlitePath: "/tmp/local-quotes.db",
+        cacheKey: "sqlite:/tmp/local-quotes.db",
+      }),
+    }));
+
+    const { getDb } = await import("./db");
+    const firstCall = getDb();
+    const secondCall = getDb();
+
+    await vi.waitFor(() => {
+      expect(open).toHaveBeenCalledTimes(1);
+    });
+
+    releaseInitialization?.();
+
+    const [firstDb, secondDb] = await Promise.all([firstCall, secondCall]);
+
+    expect(firstDb).toBe(secondDb);
+    expect(open).toHaveBeenCalledTimes(1);
+  });
 });

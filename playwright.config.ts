@@ -3,10 +3,11 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './e2e',
   timeout: 30_000,
+  workers: 1,
   expect: {
     timeout: 10_000,
   },
-  fullyParallel: true,
+  fullyParallel: false,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
@@ -14,9 +15,9 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npm run dev',
-    url: 'http://127.0.0.1:600',
-    reuseExistingServer: !process.env.CI,
+    command: 'npm run dev:e2e',
+    url: 'http://127.0.0.1:600/api/health',
+    reuseExistingServer: false,
     timeout: 120_000,
   },
   projects: [

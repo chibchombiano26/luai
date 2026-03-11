@@ -4,6 +4,7 @@ import { isFlowCardId } from '@/lib/platform/cards';
 import {
   GENERATED_FLOW_PACK_SERVER_MODULES,
 } from '@/lib/platform/generated-flow-pack-server';
+import { inferScopedToolIdsFromCardMetadata } from '@/lib/platform/tool-scope';
 import type {
   FlowPackChatRuntimeContext,
   FlowPackChatRuntimeResult,
@@ -17,6 +18,7 @@ interface ResolveFlowPackChatRuntimeResult {
   toolContext: Partial<ToolContext>;
   streamFeedbackByToolId: Record<string, FlowPackToolStreamFeedback>;
   usageRecorders: Array<(context: FlowPackUsageRecordContext) => Promise<void> | void>;
+  allowedToolIds: Set<string> | null;
 }
 
 function getEnabledFlowPackServerModules(
@@ -60,6 +62,13 @@ function mergeChatRuntimeResult(
     Object.assign(target.streamFeedbackByToolId, source.streamFeedbackByToolId);
   }
 
+  if (Array.isArray(source.allowedToolIds)) {
+    const nextAllowedToolIds = new Set(source.allowedToolIds.filter(Boolean));
+    target.allowedToolIds = target.allowedToolIds
+      ? new Set([...target.allowedToolIds].filter((toolId) => nextAllowedToolIds.has(toolId)))
+      : nextAllowedToolIds;
+  }
+
   return target;
 }
 
@@ -71,6 +80,7 @@ export async function resolveFlowPackChatRuntime(
     toolContext: {},
     streamFeedbackByToolId: {},
     usageRecorders: [],
+    allowedToolIds: null,
   };
 
   const serverModules = getEnabledFlowPackServerModules(context.enabledCardIds);
@@ -93,6 +103,25 @@ export async function resolveFlowPackChatRuntime(
 
     if (result.earlyResponse) {
       break;
+    }
+  }
+
+  const inferredAllowedToolIds = inferScopedToolIdsFromCardMetadata({
+    enabledCardIds: context.enabledCardIds,
+    locale: context.requestContext.locale,
+    message: context.requestContext.normalizedLastUserMessage,
+  });
+
+  if (inferredAllowedToolIds) {
+    if (!result.allowedToolIds) {
+      result.allowedToolIds = inferredAllowedToolIds;
+    } else {
+      const intersected = new Set(
+        [...result.allowedToolIds].filter((toolId) => inferredAllowedToolIds.has(toolId))
+      );
+      if (intersected.size > 0) {
+        result.allowedToolIds = intersected;
+      }
     }
   }
 

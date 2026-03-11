@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getRepositoryFactory, getRepositories, resetRepositoryFactory } from '@/lib/repositories/repository-factory';
+import {
+  getRepositoryFactory,
+  getRepositories,
+  resetRepositoryFactory,
+} from '@/lib/repositories/repository-factory';
 import { getDb } from '@/lib/db';
 import { getPostgresClient } from '@/lib/database/postgres/client';
 import { resolveActiveDatabaseConnectionConfig } from '@/lib/database-provider-config';

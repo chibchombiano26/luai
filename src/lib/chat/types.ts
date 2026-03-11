@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import type { AppLocale } from '@/lib/i18n';
 import type { ChatCommandId } from './commands';
 
@@ -26,6 +26,10 @@ export interface SlashCommandMenuProps {
   onSelectCommand: (command: SlashCommandSelection) => void;
   locale?: AppLocale;
   enabledCommandIds?: ChatCommandId[];
+}
+
+export interface SlashCommandMenuHandle {
+  handleKeyDown: (event: KeyboardEvent<HTMLTextAreaElement>) => boolean;
 }
 
 export interface ChatApiMessage {

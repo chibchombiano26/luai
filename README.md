@@ -21,7 +21,7 @@ Developer documentation is published at [luai.gitbook.io/luai](https://luai.gitb
 
 - The public repository currently ships with one example pack: [`flow-packs/weather`](./flow-packs/weather).
 - Pack integration is generated during build, not loaded dynamically at runtime.
-- Public pages, API routes, chat commands, UI renderers, server tools, and MCP entrypoints are resolved from pack manifests.
+- Public pages, API routes, chat commands, UI renderers, server tools, and MCP modules are resolved from pack manifests.
 - Local auth supports Clerk, Basic Auth fallback, and local-only development overrides.
 - Coverage is tracked by scope: `core`, `packs`, and `all`.
 - Core coverage enforces `95%` thresholds for statements, branches, functions, and lines.
@@ -89,7 +89,7 @@ src/
     platform/               # Pack contracts and generated registries
     profile/                # User profile and usage settings
     query/                  # React Query setup
-  mcp-server/               # MCP bootstrap generated from packs
+  mcp-server/               # Shared MCP host plus generated pack registry
 docs/                       # GitBook content root
 docker-compose.yml          # Host + MCP + PostgreSQL local deployment
 ```
@@ -169,7 +169,7 @@ Required card metadata includes:
 Optional pack capabilities:
 - public pages
 - public API routes
-- MCP bootstrap
+- MCP tool module
 - admin card options
 
 ## Public And Private Pack Sources
@@ -232,7 +232,7 @@ The coverage split exists because host logic and pack logic evolve independently
 
 ## Docker And Deployment
 
-For a generic local deployment with the host, MCP server, and PostgreSQL:
+For a generic local deployment with the host, embedded MCP runtime, and PostgreSQL:
 
 ```bash
 cp docker.env.example docker.env
@@ -241,7 +241,7 @@ docker compose --env-file docker.env up -d --build
 
 That compose setup runs:
 - the Next.js host
-- the MCP server
+- the MCP runtime inside the `luai` container
 - PostgreSQL
 
 Notes:

@@ -1,0 +1,54 @@
+{
+  "id": "markets",
+  "name": "Market assets",
+  "version": "1.0.0",
+  "description": "Public market asset flows for metals and selected market-traded instruments.",
+  "publicPages": [
+    {
+      "id": "market_home_page",
+      "route": "/flow/markets",
+      "module": "ui/pages/MarketsHomePage.tsx"
+    },
+    {
+      "id": "market_asset_page",
+      "route": "/flow/markets/[symbol]",
+      "module": "ui/pages/MarketAssetPage.tsx"
+    }
+  ],
+  "publicApiRoutes": [
+    {
+      "id": "market_assets",
+      "route": "/api/flow/markets/assets",
+      "module": "server/routes/assets.ts",
+      "methods": ["GET"]
+    },
+    {
+      "id": "market_asset_by_symbol",
+      "route": "/api/flow/markets/assets/[symbol]",
+      "module": "server/routes/asset-by-symbol.ts",
+      "methods": ["GET"]
+    },
+    {
+      "id": "market_admin_settings",
+      "route": "/api/flow/markets/admin/settings",
+      "module": "server/routes/admin-settings.ts",
+      "methods": ["GET", "POST"]
+    },
+    {
+      "id": "market_profile_preferences",
+      "route": "/api/flow/markets/preferences",
+      "module": "server/routes/preferences.ts",
+      "methods": ["GET", "POST"]
+    }
+  ],
+  "admin": {
+    "cardOptions": {
+      "market_asset_lookup": {
+        "configPlaceholder": {
+          "es": "{\n  \"defaultSymbol\": \"XAU\",\n  \"compareSymbols\": [\"XAG\", \"XPT\", \"BTC\"],\n  \"audience\": \"public-investor\"\n}",
+          "en": "{\n  \"defaultSymbol\": \"XAU\",\n  \"compareSymbols\": [\"XAG\", \"XPT\", \"BTC\"],\n  \"audience\": \"public-investor\"\n}"
+        }
+      }
+    }
+  }
+}

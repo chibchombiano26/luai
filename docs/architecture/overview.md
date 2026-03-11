@@ -55,7 +55,7 @@ flowchart LR
 - UI renderers for tool output.
 - Optional public pages.
 - Optional public API routes.
-- Optional MCP entrypoint.
+- Optional MCP tool module.
 - Optional admin metadata for pack-specific configuration.
 
 ## Pack sources

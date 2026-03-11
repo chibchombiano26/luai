@@ -51,4 +51,4 @@ npm run test:coverage
 
 ## MCP host
 
-The standalone MCP runtime lives in `src/mcp-server/`. It starts whatever MCP exports are declared by installed packs.
+The MCP runtime lives in `src/mcp-server/`. Packs contribute MCP tool modules, and the shared host exposes only the operations enabled by the active cards.

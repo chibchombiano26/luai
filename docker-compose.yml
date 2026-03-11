@@ -43,6 +43,8 @@ services:
       NODE_ENV: production
       TZ: ${TZ:-America/Bogota}
       PORT: 3000
+      MCP_PORT: ${MCP_PORT:-604}
+      START_MCP_SERVER: ${START_MCP_SERVER:-true}
       DATABASE_URL: /app/data/quotes.db
       POSTGRES_URL: ${POSTGRES_URL:-postgresql://${POSTGRES_USER:-luai}:${POSTGRES_PASSWORD:-luai_dev_password}@postgres:5432/${POSTGRES_DB:-luai}}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
@@ -60,44 +62,9 @@ services:
       - ./data:/app/data
     ports:
       - "6001:3000"
+      - "${MCP_PUBLIC_PORT:-6604}:${MCP_PORT:-604}"
     healthcheck:
-      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/api/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
-
-  flow-pack-mcp:
-    env_file:
-      - path: docker.runtime.env
-        required: false
-    build:
-      context: .
-      dockerfile: Dockerfile.mcp
-      args:
-        FLOW_PACKS_DIR: ${FLOW_PACKS_DIR:-flow-packs}
-        FLOW_PACK_PACKAGES: ${FLOW_PACK_PACKAGES:-}
-        PUBLIC_FLOW_PACK_PACKAGES: ${PUBLIC_FLOW_PACK_PACKAGES:-}
-        NODE_AUTH_TOKEN: ${NODE_AUTH_TOKEN:-}
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      NODE_ENV: production
-      TZ: ${TZ:-America/Bogota}
-      MCP_PORT: ${MCP_PORT:-604}
-      DATABASE_URL: /app/data/quotes.db
-      POSTGRES_URL: ${POSTGRES_URL:-postgresql://${POSTGRES_USER:-luai}:${POSTGRES_PASSWORD:-luai_dev_password}@postgres:5432/${POSTGRES_DB:-luai}}
-      DEBUG_OUTBOUND_CURLS: ${DEBUG_OUTBOUND_CURLS:-false}
-      DEBUG_OUTBOUND_HTTP_DETAILS: ${DEBUG_OUTBOUND_HTTP_DETAILS:-false}
-      OUTBOUND_HTTP_DEBUG_MAX_BODY_CHARS: ${OUTBOUND_HTTP_DEBUG_MAX_BODY_CHARS:-2000}
-    volumes:
-      - ./data:/app/data
-    ports:
-      - "6604:604"
-    healthcheck:
-      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:604/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      test: ["CMD-SHELL", "node -e 'const mcpPort = Number(process.env.MCP_PORT || 604); const checks = [fetch(\"http://127.0.0.1:3000/api/health\")]; if (process.env.START_MCP_SERVER === \"true\") checks.push(fetch(\"http://127.0.0.1:\" + mcpPort + \"/health\")); Promise.all(checks).then((responses)=>process.exit(responses.every((r)=>r.ok)?0:1)).catch(()=>process.exit(1))'"]
       interval: 30s
       timeout: 5s
       retries: 5

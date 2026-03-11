@@ -82,7 +82,7 @@ sequenceDiagram
   Build->>Registry: generate host + MCP registries
   Build->>Host: generate App Router mounts
   Registry->>Host: cards, prompts, tools, renderers
-  Registry->>MCP: pack MCP entrypoints
+  Registry->>MCP: pack MCP tool modules
 ```
 
 ## Public pages and API routes

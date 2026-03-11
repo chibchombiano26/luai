@@ -21,7 +21,7 @@ La documentación para developers está publicada en [luai.gitbook.io/luai](http
 
 - El repositorio público incluye actualmente un pack de ejemplo: [`flow-packs/weather`](./flow-packs/weather).
 - La integración de packs se genera durante el build; no se carga dinámicamente en runtime.
-- Las páginas públicas, rutas API, comandos de chat, renderers de UI, tools de servidor y entrypoints MCP se resuelven desde los manifiestos de cada pack.
+- Las páginas públicas, rutas API, comandos de chat, renderers de UI, tools de servidor y módulos MCP se resuelven desde los manifiestos de cada pack.
 - La autenticación local soporta Clerk, fallback a Basic Auth y overrides solo para desarrollo.
 - La cobertura se mide por scope: `core`, `packs` y `all`.
 - El scope `core` exige umbrales de `95%` para statements, branches, functions y lines.
@@ -89,7 +89,7 @@ src/
     platform/               # Contratos de packs y registros generados
     profile/                # Perfil de usuario y settings de uso
     query/                  # Configuracion de React Query
-  mcp-server/               # Bootstrap MCP generado desde packs
+  mcp-server/               # Host MCP compartido y registro generado de packs
 docs/                       # Raiz de contenido para GitBook
 docker-compose.yml          # Despliegue local con host + MCP + PostgreSQL
 ```
@@ -169,7 +169,7 @@ Metadata requerida de cada card:
 Capacidades opcionales del pack:
 - paginas publicas
 - rutas API publicas
-- bootstrap MCP
+- modulo de tools MCP
 - opciones de admin por card
 
 ## Fuentes Publicas Y Privadas De Packs
@@ -232,7 +232,7 @@ La separacion existe porque la logica del host y la de los packs evolucionan de 
 
 ## Docker Y Despliegue
 
-Para un despliegue local generico con host, servidor MCP y PostgreSQL:
+Para un despliegue local generico con host, runtime MCP embebido y PostgreSQL:
 
 ```bash
 cp docker.env.example docker.env
@@ -241,7 +241,7 @@ docker compose --env-file docker.env up -d --build
 
 Ese compose levanta:
 - el host Next.js
-- el servidor MCP
+- el runtime MCP dentro del contenedor `luai`
 - PostgreSQL
 
 Notas:

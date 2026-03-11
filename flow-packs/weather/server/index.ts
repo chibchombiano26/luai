@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { FlowPackServerModule } from '@/lib/platform/pack-server';
+import type { FlowPackChatModule, FlowPackServerModule } from '@/lib/platform/pack-server';
 import type { ToolContext } from '@/app/api/chat/agent-tools-types';
 import { getWeatherForecast, type WeatherUnits } from '@packs/weather/shared/open-meteo';
 
@@ -25,6 +25,17 @@ function resolveProvider(value: unknown): string {
   if (typeof value !== 'string') return 'open-meteo';
   return value.trim().toLowerCase();
 }
+
+const WEATHER_SCOPE_KEYWORDS = [
+  'clima',
+  'tiempo',
+  'temperatura',
+  'lluvia',
+  'pronostico',
+  'pronóstico',
+  'forecast',
+  'weather',
+];
 
 export function show_weather_forecast(context: ToolContext) {
   const { isEnglish, abortSignal } = context;
@@ -107,6 +118,21 @@ export function show_weather_forecast(context: ToolContext) {
     },
   };
 }
+
+export const chat: FlowPackChatModule = {
+  async resolveRuntime({ requestContext }) {
+    const lower = requestContext.normalizedLastUserMessage.toLowerCase();
+    const shouldScopeWeatherTools = WEATHER_SCOPE_KEYWORDS.some((keyword) => lower.includes(keyword));
+
+    if (!shouldScopeWeatherTools) {
+      return null;
+    }
+
+    return {
+      allowedToolIds: ['show_weather_forecast'],
+    };
+  },
+};
 
 export const tools: FlowPackServerModule['tools'] = {
   show_weather_forecast,

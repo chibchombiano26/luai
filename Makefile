@@ -70,6 +70,7 @@ config: check-env
 
 urls:
 	@echo "App:      http://localhost:6001"
+	@echo "MCP:      http://localhost:6604/sse"
 	@echo "Backend externo (Langflow): configura LANGFLOW_API_URL"
 	@echo "Node-RED: no aplica en este setup"
 

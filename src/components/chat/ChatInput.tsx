@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from 'react';
 import { Send, Mic, MicOff, Square } from 'lucide-react';
 import { AppLocale } from '@/lib/i18n';
 import { SlashCommandMenu } from './SlashCommandMenu';
-import { SlashCommandSelection } from '@/lib/chat/types';
+import { SlashCommandMenuHandle, SlashCommandSelection } from '@/lib/chat/types';
 import { ChatCommandId } from '@/lib/chat/commands';
 import { CHAT_COPY, MAX_INPUT_LINES } from './chat-constants';
 
@@ -79,6 +79,7 @@ export function ChatInput({
   enabledCommandIds,
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const slashCommandMenuRef = useRef<SlashCommandMenuHandle | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const baseInputRef = useRef('');
   const latestSetInputRef = useRef(setInput);
@@ -222,6 +223,14 @@ export function ChatInput({
     onSubmit(e);
   };
 
+  const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (slashCommandMenuRef.current?.handleKeyDown(e)) {
+      return;
+    }
+
+    onKeyDown(e);
+  };
+
   return (
     <div className="sticky bottom-0 p-3 md:p-6 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:pb-6 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800">
       {pendingAutoSubmit && !isLoading && (
@@ -254,12 +263,13 @@ export function ChatInput({
             value={input}
             placeholder={t.placeholder}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={onKeyDown}
+            onKeyDown={handleTextareaKeyDown}
             onCompositionStart={onInputCompositionStart}
             onCompositionEnd={onInputCompositionEnd}
             disabled={isLoading}
           />
           <SlashCommandMenu
+            ref={slashCommandMenuRef}
             input={input}
             onSelectCommand={onSelectCommand}
             locale={locale}

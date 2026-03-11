@@ -1,0 +1,59 @@
+{
+  "id": "market_asset_lookup",
+  "packId": "markets",
+  "kind": "native",
+  "adapter": "market_asset_lookup",
+  "order": 40,
+  "category": "markets",
+  "defaultEnabled": true,
+  "toolId": "show_market_asset",
+  "langflowEndpoint": "/markets/assets",
+  "supportedToolIds": [
+    "show_market_asset"
+  ],
+  "name": {
+    "es": "Activo de mercado",
+    "en": "Market asset"
+  },
+  "description": {
+    "es": "Consulta el precio actual de un activo como oro, plata, cobre, bitcoin o ethereum.",
+    "en": "Check the current price of an asset such as gold, silver, copper, bitcoin, or ethereum."
+  },
+  "systemPromptByLocale": {
+    "es": "FLUJO: Mercados (market_asset_lookup)\n- Usa show_market_asset cuando el usuario quiera ver el precio de un activo especifico como oro, plata, cobre, bitcoin o ethereum.\n- Si no dicen el simbolo exacto, interpreta nombres comunes como oro -> XAU y plata -> XAG.\n- Si el usuario pide un solo activo, consulta exactamente un activo y no repitas ni arrastres activos de turnos anteriores.\n- Solo consulta varios activos si el usuario pide comparar o menciona explicitamente mas de uno.\n- Devuelve el resultado del tool y, si ayuda, sugiere abrir la pagina publica del activo.",
+    "en": "FLOW: Markets (market_asset_lookup)\n- Use show_market_asset when the user wants to see the price of a specific asset such as gold, silver, copper, bitcoin, or ethereum.\n- If the user does not provide the exact symbol, map common names such as gold -> XAU and silver -> XAG.\n- If the user asks for a single asset, fetch exactly one asset and do not repeat or carry over assets from previous turns.\n- Only fetch multiple assets when the user explicitly asks to compare or mentions more than one asset.\n- Return the tool result and, when useful, suggest the public asset page."
+  },
+  "commands": [
+    {
+      "id": "market_asset_lookup",
+      "toolId": "show_market_asset",
+      "order": 40,
+      "includeInMenu": true,
+      "iconKey": "chart-column",
+      "name": {
+        "es": "Activo de Mercado",
+        "en": "Market Asset"
+      },
+      "description": {
+        "es": "Consultar precio actual de un activo",
+        "en": "Check the current price of an asset"
+      },
+      "category": {
+        "es": "Mercados",
+        "en": "Markets"
+      },
+      "example": {
+        "es": "/mercado oro",
+        "en": "/market gold"
+      },
+      "prompt": {
+        "es": "Muestrame el precio actual de un activo",
+        "en": "Show me the current price of an asset"
+      },
+      "aliases": {
+        "es": ["mercado", "oro", "plata", "asset"],
+        "en": ["market", "gold", "silver", "asset"]
+      }
+    }
+  ]
+}

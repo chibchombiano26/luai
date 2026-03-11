@@ -15,6 +15,7 @@
     "dev:private-packs": "FLOW_PACKS_DIRS=flow-packs,my-flow-packs,private-packages node scripts/run-dev.mjs",
     "dev:noauth": "node scripts/run-dev.mjs --noauth",
     "dev:noauth:private-packs": "FLOW_PACKS_DIRS=flow-packs,my-flow-packs,private-packages node scripts/run-dev.mjs --noauth",
+    "dev:e2e": "node scripts/run-e2e-runtime.mjs",
     "build": "npm run build:flow-packs && next build",
     "start": "next start",
     "lint": "eslint",

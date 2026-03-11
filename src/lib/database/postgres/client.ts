@@ -12,6 +12,9 @@ export interface PostgresClient {
 
 let postgresClient: PostgresClient | null = null;
 let postgresCacheKey: string | null = null;
+let postgresReadyPromise: Promise<void> | null = null;
+let postgresInitPromise: Promise<PostgresClient> | null = null;
+let postgresInitCacheKey: string | null = null;
 
 export async function getPostgresClient(): Promise<PostgresClient> {
   const connection = await resolveActiveDatabaseConnectionConfig();
@@ -20,30 +23,57 @@ export async function getPostgresClient(): Promise<PostgresClient> {
   }
 
   if (postgresClient && postgresCacheKey === connection.cacheKey) {
+    if (postgresReadyPromise) {
+      await postgresReadyPromise;
+    }
     return postgresClient;
   }
 
-  const pool = new Pool({
-    connectionString: connection.postgresConnectionString,
-  });
+  if (postgresInitPromise && postgresInitCacheKey === connection.cacheKey) {
+    return postgresInitPromise;
+  }
 
-  postgresClient = {
-    query: async <T extends QueryResultRow = Record<string, unknown>>(
-      text: string,
-      values: unknown[] = []
-    ) => {
-      const result = await pool.query<T>(text, values);
-      return { rows: result.rows };
-    },
-    end: async () => {
-      await pool.end();
-    },
-  };
-  postgresCacheKey = connection.cacheKey;
+  postgresInitCacheKey = connection.cacheKey;
+  const initialization = (async () => {
+    const pool = new Pool({
+      connectionString: connection.postgresConnectionString,
+    });
 
-  await ensurePostgresDatabaseReady(postgresClient);
+    postgresClient = {
+      query: async <T extends QueryResultRow = Record<string, unknown>>(
+        text: string,
+        values: unknown[] = []
+      ) => {
+        const result = await pool.query<T>(text, values);
+        return { rows: result.rows };
+      },
+      end: async () => {
+        await pool.end();
+      },
+    };
+    postgresCacheKey = connection.cacheKey;
 
-  return postgresClient;
+    postgresReadyPromise = ensurePostgresDatabaseReady(postgresClient);
+
+    try {
+      await postgresReadyPromise;
+    } finally {
+      postgresReadyPromise = null;
+    }
+
+    return postgresClient;
+  })();
+
+  postgresInitPromise = initialization;
+
+  try {
+    return await initialization;
+  } finally {
+    if (postgresInitPromise === initialization) {
+      postgresInitPromise = null;
+      postgresInitCacheKey = null;
+    }
+  }
 }
 
 export async function resetPostgresClient(): Promise<void> {
@@ -52,4 +82,7 @@ export async function resetPostgresClient(): Promise<void> {
   }
   postgresClient = null;
   postgresCacheKey = null;
+  postgresReadyPromise = null;
+  postgresInitPromise = null;
+  postgresInitCacheKey = null;
 }

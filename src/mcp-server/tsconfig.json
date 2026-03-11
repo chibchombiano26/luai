@@ -16,7 +16,8 @@
     "noEmit": true,
     "baseUrl": "..",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@packs/*": ["../flow-packs/*"]
     }
   },
   "include": ["index.ts", "../lib/**/*"],

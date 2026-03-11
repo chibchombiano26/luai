@@ -49,4 +49,57 @@ describe('WeatherForecastCard', () => {
     expect(screen.getByText('20° / 11°')).toBeInTheDocument();
     expect(screen.getByText('19° / 12°')).toBeInTheDocument();
   });
+
+  it('renders english imperial units, fallback precipitation, and no sun chips when times are invalid', () => {
+    render(
+      <WeatherForecastCard
+        locationName="Miami, Florida"
+        timezone="America/New_York"
+        units="imperial"
+        summary="Weather in Miami: mixed conditions."
+        current={{
+          time: '2026-03-05T12:00',
+          weatherCode: 95,
+          weatherLabel: 'Thunderstorm',
+          temperature: 78.2,
+          apparentTemperature: 80.4,
+          windSpeed: 9.3,
+        }}
+        daily={[
+          {
+            date: '2026-03-05',
+            weatherCode: 45,
+            weatherLabel: 'Fog',
+            tempMax: 82,
+            tempMin: 70,
+            sunrise: 'invalid',
+            sunset: 'invalid',
+          },
+          {
+            date: '2026-03-06',
+            weatherCode: 71,
+            weatherLabel: 'Snow',
+            tempMax: 65,
+            tempMin: 44,
+          },
+          {
+            date: '2026-03-07',
+            weatherCode: 51,
+            weatherLabel: 'Drizzle',
+            tempMax: 68,
+            tempMin: 52,
+          },
+        ]}
+        locale="en"
+      />
+    );
+
+    expect(screen.getByText('Now')).toBeInTheDocument();
+    expect(screen.getByText('Feels like')).toBeInTheDocument();
+    expect(screen.getByText('80°F')).toBeInTheDocument();
+    expect(screen.getByText('9 mph')).toBeInTheDocument();
+    expect(screen.getAllByText('--').length).toBeGreaterThan(0);
+    expect(screen.getByText('82° / 70°')).toBeInTheDocument();
+    expect(screen.queryByText(/AM|PM/)).not.toBeInTheDocument();
+  });
 });

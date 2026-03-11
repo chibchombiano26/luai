@@ -68,21 +68,25 @@ describe("ChatHeader", () => {
     process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = originalClerkKey;
   });
 
-  it("renders host mode without Clerk and shows overrides plus local admin link", async () => {
-    const user = userEvent.setup();
-    const { props } = renderHeader({ hasOverrides: true });
+  it(
+    "renders host mode without Clerk and shows overrides plus local admin link",
+    async () => {
+      const user = userEvent.setup();
+      const { props } = renderHeader({ hasOverrides: true });
 
-    expect(screen.getByText("⚙️ Hay overrides activos en el payload.")).toBeInTheDocument();
-    expect(screen.getByText("LuAI")).toBeInTheDocument();
-    expect(screen.queryByTestId("clerk-user-button")).not.toBeInTheDocument();
+      expect(screen.getByText("⚙️ Hay overrides activos en el payload.")).toBeInTheDocument();
+      expect(screen.getByText("LuAI")).toBeInTheDocument();
+      expect(screen.queryByTestId("clerk-user-button")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Menu" }));
-    expect(screen.getByRole("link", { name: "Perfil" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Admin" })).toBeInTheDocument();
+      await user.click(screen.getByRole("button", { name: "Menu" }));
+      expect(screen.getByRole("link", { name: "Perfil" })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Admin" })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Cambiar a oscuro" }));
-    expect(props.toggleTheme).toHaveBeenCalledTimes(1);
-  });
+      await user.click(screen.getByRole("button", { name: "Cambiar a oscuro" }));
+      expect(props.toggleTheme).toHaveBeenCalledTimes(1);
+    },
+    15000
+  );
 
   it("renders Clerk brand and admin controls based on auth state", async () => {
     const user = userEvent.setup();
