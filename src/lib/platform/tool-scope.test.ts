@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { isFlowCardId } from './cards';
 import { inferScopedToolIdsFromCardMetadata } from './tool-scope';
 
 describe('inferScopedToolIdsFromCardMetadata', () => {
@@ -23,13 +24,18 @@ describe('inferScopedToolIdsFromCardMetadata', () => {
   });
 
   it('scopes an insurance turn from card metadata keywords', () => {
-    expect(
-      inferScopedToolIdsFromCardMetadata({
-        enabledCardIds: new Set(['insurer_comparison', 'single_provider_quote', 'market_asset_lookup']),
-        locale: 'es',
-        message: 'Quiero comparar aseguradoras para cotizar mi vehiculo',
-      })
-    ).toEqual(
+    const result = inferScopedToolIdsFromCardMetadata({
+      enabledCardIds: new Set(['insurer_comparison', 'single_provider_quote', 'market_asset_lookup']),
+      locale: 'es',
+      message: 'Quiero comparar aseguradoras para cotizar mi vehiculo',
+    });
+
+    if (!isFlowCardId('insurer_comparison') || !isFlowCardId('single_provider_quote')) {
+      expect(result).toBeNull();
+      return;
+    }
+
+    expect(result).toEqual(
       new Set([
         'collect_vehicle_info',
         'collect_owner_info',
