@@ -14,6 +14,17 @@ blocked=0
 
 echo "Running staged secret scan..."
 
+search_added_lines() {
+  local regex="$1"
+
+  if command -v rg >/dev/null 2>&1; then
+    printf '%s\n' "$patch" | rg -n --pcre2 "^\+[^+].*(${regex})" || true
+    return
+  fi
+
+  printf '%s\n' "$patch" | grep -En "^\+[^+].*(${regex})" || true
+}
+
 # Block committing real env files directly (.env, .env.local, env, etc.).
 while IFS= read -r file; do
   [[ -z "$file" ]] && continue
@@ -63,7 +74,7 @@ regexes=(
 for i in "${!regexes[@]}"; do
   name="${names[$i]}"
   regex="${regexes[$i]}"
-  matches="$(printf '%s\n' "$patch" | rg -n --pcre2 "^\+[^+].*(${regex})" || true)"
+  matches="$(search_added_lines "$regex")"
   if [[ -n "$matches" ]]; then
     echo
     echo "Potential secret detected ($name):"
