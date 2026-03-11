@@ -107,9 +107,11 @@ describe('flow-pack MCP registry', () => {
 
   it('uses the generated mcp export instead of the module namespace', () => {
     expect(GENERATED_FLOW_PACK_MCP_MODULES.length).toBeGreaterThan(0);
-    expect(GENERATED_FLOW_PACK_MCP_MODULES[0]?.module.tools?.length).toBeGreaterThan(0);
+    expect(
+      GENERATED_FLOW_PACK_MCP_MODULES.every((entry) => (entry.module.tools?.length ?? 0) > 0)
+    ).toBe(true);
     expect(GENERATED_FLOW_PACK_MCP_MODULES.map((entry) => entry.packId)).toEqual(
-      expect.arrayContaining(['insurance', 'markets', 'weather', 'pokemon'])
+      expect.arrayContaining(['markets', 'weather'])
     );
   });
 

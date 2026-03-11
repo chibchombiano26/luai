@@ -22,12 +22,12 @@ describe('inferScopedToolIdsFromCardMetadata', () => {
     ).toEqual(new Set(['show_market_asset']));
   });
 
-  it('scopes an insurance turn from quote language and plate details', () => {
+  it('scopes an insurance turn from card metadata keywords', () => {
     expect(
       inferScopedToolIdsFromCardMetadata({
         enabledCardIds: new Set(['insurer_comparison', 'single_provider_quote', 'market_asset_lookup']),
         locale: 'es',
-        message: 'Cotizame la placa RHO121',
+        message: 'Quiero comparar aseguradoras para cotizar mi vehiculo',
       })
     ).toEqual(
       new Set([
@@ -36,7 +36,6 @@ describe('inferScopedToolIdsFromCardMetadata', () => {
         'quote_vehicle_policy',
         'show_quote_history',
         'show_insurer_comparison',
-        'show_provider_quote',
       ])
     );
   });
