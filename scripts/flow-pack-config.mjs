@@ -5,6 +5,7 @@ import path from 'node:path';
 const CONFIG_FILE = 'flow-packs.config.json';
 const DEFAULT_PUBLIC_LOCAL_DIRECTORIES = ['flow-packs'];
 const DEFAULT_LOCAL_DIRECTORIES = ['flow-packs', 'my-flow-packs'];
+const PUBLIC_VISIBILITY_MODE = 'public';
 
 function unique(values) {
   return [...new Set(values)];
@@ -54,6 +55,10 @@ function fromConfigList(value, fallback) {
 
 export async function getFlowPackSourceConfig(projectRoot, env = process.env) {
   const config = await readConfigFile(projectRoot);
+  const visibilityMode =
+    typeof env.FLOW_PACK_VISIBILITY === 'string' && env.FLOW_PACK_VISIBILITY.trim() === PUBLIC_VISIBILITY_MODE
+      ? PUBLIC_VISIBILITY_MODE
+      : 'all';
   const detectedLocalDirectories = [...fromConfigList(config.localDirectories, DEFAULT_LOCAL_DIRECTORIES)];
   const privateOverlayDir = 'private-packages';
   const privateOverlayPath = path.resolve(projectRoot, privateOverlayDir);
@@ -65,23 +70,33 @@ export async function getFlowPackSourceConfig(projectRoot, env = process.env) {
     detectedLocalDirectories.push(privateOverlayDir);
   }
 
+  const publicLocalDirectories = resolveStringList(
+    env.PUBLIC_FLOW_PACKS_DIRS,
+    fromConfigList(config.publicLocalDirectories, DEFAULT_PUBLIC_LOCAL_DIRECTORIES)
+  );
+  const publicPackageNames = resolveStringList(
+    env.PUBLIC_FLOW_PACK_PACKAGES,
+    fromConfigList(config.publicPackageNames, [])
+  );
+
+  if (visibilityMode === PUBLIC_VISIBILITY_MODE) {
+    return {
+      localDirectories: publicLocalDirectories,
+      publicLocalDirectories,
+      packageNames: publicPackageNames,
+      publicPackageNames,
+    };
+  }
+
   const localDirectories = env.FLOW_PACKS_DIR
     ? resolveStringList(env.FLOW_PACKS_DIR, [env.FLOW_PACKS_DIR])
     : resolveStringList(
         env.FLOW_PACKS_DIRS,
         detectedLocalDirectories
       );
-  const publicLocalDirectories = resolveStringList(
-    env.PUBLIC_FLOW_PACKS_DIRS,
-    fromConfigList(config.publicLocalDirectories, DEFAULT_PUBLIC_LOCAL_DIRECTORIES)
-  );
   const packageNames = resolveStringList(
     env.FLOW_PACK_PACKAGES,
     fromConfigList(config.packageNames, [])
-  );
-  const publicPackageNames = resolveStringList(
-    env.PUBLIC_FLOW_PACK_PACKAGES,
-    fromConfigList(config.publicPackageNames, [])
   );
 
   return {

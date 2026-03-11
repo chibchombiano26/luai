@@ -190,6 +190,8 @@ Valores publicos por defecto en este repo:
 Controles soportados:
 - `FLOW_PACKS_DIRS` para una lista separada por comas de directorios locales
 - `FLOW_PACK_PACKAGES` para paquetes de packs instalados
+- `PUBLIC_FLOW_PACK_PACKAGES` para paquetes instalados de packs publicos
+- `FLOW_PACK_VISIBILITY=public` para forzar un registro solo publico e ignorar overlays privados
 
 `npm run dev` detecta automaticamente `private-packages/` y activa `FLOW_PACKS_DIRS=flow-packs,my-flow-packs,private-packages` cuando esa carpeta existe y no se definio una configuracion explicita de fuentes.
 
@@ -216,8 +218,10 @@ Scripts principales:
 
 ```bash
 npm run test
+npm run test:public
 npm run test:e2e
 npm run test:coverage
+npm run test:coverage:public
 npm run test:coverage:core
 npm run test:coverage:packs
 npm run test:coverage:all
@@ -229,6 +233,10 @@ Scopes de coverage:
 - `all`: cobertura total del repositorio
 
 La separacion existe porque la logica del host y la de los packs evolucionan de forma independiente. El suite `core` exige umbrales de `95%`.
+
+Separacion de CI:
+- `tests.yml` valida solo el camino publico del repositorio con `FLOW_PACK_VISIBILITY=public`
+- `tests-private.yml` valida overlays privados opcionales cuando `FLOW_PACK_PACKAGES` esta configurado
 
 ## Docker Y Despliegue
 

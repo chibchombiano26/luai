@@ -1,23 +1,25 @@
-name: Tests
+name: Tests Private Overlays
 
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 concurrency:
-  group: tests-${{ github.workflow }}-${{ github.ref }}
+  group: tests-private-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  vitest:
-    name: Run tests
+  vitest-private:
+    name: Run tests with private overlays
+    if: ${{ vars.FLOW_PACK_PACKAGES != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
       packages: read
     env:
-      FLOW_PACK_VISIBILITY: public
+      FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
       PUBLIC_FLOW_PACK_PACKAGES: ${{ vars.PUBLIC_FLOW_PACK_PACKAGES }}
 
     steps:
@@ -39,20 +41,21 @@ jobs:
 
       - name: Generate flow-pack registry
         env:
-          FLOW_PACK_VISIBILITY: public
+          FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
           PUBLIC_FLOW_PACK_PACKAGES: ${{ vars.PUBLIC_FLOW_PACK_PACKAGES }}
           NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN != '' && secrets.GH_PACKAGES_TOKEN || github.token }}
-        run: npm run build:flow-packs:public
+        run: npm run build:flow-packs
 
       - name: Run test suite
         env:
           CI: "true"
-          FLOW_PACK_VISIBILITY: public
+          FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
           PUBLIC_FLOW_PACK_PACKAGES: ${{ vars.PUBLIC_FLOW_PACK_PACKAGES }}
-        run: npm run test:public
+        run: npm test
 
-  coverage:
-    name: Run coverage
+  coverage-private:
+    name: Run coverage with private overlays
+    if: ${{ vars.FLOW_PACK_PACKAGES != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -60,7 +63,7 @@ jobs:
       packages: read
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      FLOW_PACK_VISIBILITY: public
+      FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
       PUBLIC_FLOW_PACK_PACKAGES: ${{ vars.PUBLIC_FLOW_PACK_PACKAGES }}
 
     steps:
@@ -82,23 +85,23 @@ jobs:
 
       - name: Generate flow-pack registry
         env:
-          FLOW_PACK_VISIBILITY: public
+          FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
           PUBLIC_FLOW_PACK_PACKAGES: ${{ vars.PUBLIC_FLOW_PACK_PACKAGES }}
           NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN != '' && secrets.GH_PACKAGES_TOKEN || github.token }}
-        run: npm run build:flow-packs:public
+        run: npm run build:flow-packs
 
       - name: Run coverage
         env:
           CI: "true"
-          FLOW_PACK_VISIBILITY: public
+          FLOW_PACK_PACKAGES: ${{ vars.FLOW_PACK_PACKAGES }}
           PUBLIC_FLOW_PACK_PACKAGES: ${{ vars.PUBLIC_FLOW_PACK_PACKAGES }}
-        run: npm run test:coverage:public
+        run: npm run test:coverage
 
       - name: Upload coverage artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-core
+          name: coverage-private
           path: coverage/
           if-no-files-found: ignore
 
@@ -109,7 +112,7 @@ jobs:
           token: ${{ env.CODECOV_TOKEN }}
           slug: chibchombiano26/luai
           files: ./coverage/core/lcov.info
-          flags: core
-          name: core-coverage
+          flags: private
+          name: private-coverage
           verbose: true
           fail_ci_if_error: true

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { isFlowCardId } from './cards';
 import { inferScopedToolIdsFromCardMetadata } from './tool-scope';
 
 describe('inferScopedToolIdsFromCardMetadata', () => {
@@ -23,33 +22,20 @@ describe('inferScopedToolIdsFromCardMetadata', () => {
     ).toEqual(new Set(['show_market_asset']));
   });
 
-  it('scopes an insurance turn from card metadata keywords', () => {
-    const result = inferScopedToolIdsFromCardMetadata({
-      enabledCardIds: new Set(['insurer_comparison', 'single_provider_quote', 'market_asset_lookup']),
-      locale: 'es',
-      message: 'Quiero comparar aseguradoras para cotizar mi vehiculo',
-    });
-
-    if (!isFlowCardId('insurer_comparison') || !isFlowCardId('single_provider_quote')) {
-      expect(result).toBeNull();
-      return;
-    }
-
-    expect(result).toEqual(
-      new Set([
-        'collect_vehicle_info',
-        'collect_owner_info',
-        'quote_vehicle_policy',
-        'show_quote_history',
-        'show_insurer_comparison',
-      ])
-    );
+  it('scopes a pokemon turn from public card metadata keywords', () => {
+    expect(
+      inferScopedToolIdsFromCardMetadata({
+        enabledCardIds: new Set(['pokemon_lookup', 'weather_forecast', 'market_asset_lookup']),
+        locale: 'es',
+        message: 'Puedes buscar el Pokemon Bulbasaur',
+      })
+    ).toEqual(new Set(['show_pokemon_lookup']));
   });
 
   it('does not scope unrelated generic turns', () => {
     expect(
       inferScopedToolIdsFromCardMetadata({
-        enabledCardIds: new Set(['insurer_comparison', 'weather_forecast', 'market_asset_lookup']),
+        enabledCardIds: new Set(['pokemon_lookup', 'weather_forecast', 'market_asset_lookup']),
         locale: 'es',
         message: 'Hola, como estas?',
       })

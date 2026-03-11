@@ -7,10 +7,10 @@ describe('getAgentTools', () => {
       {
         isEnglish: false,
         detectedPlate: null,
-        enabledCardIds: new Set(['market_asset_lookup', 'insurer_comparison']),
+        enabledCardIds: new Set(['market_asset_lookup', 'weather_forecast']),
         cardConfigById: {
           market_asset_lookup: {},
-          insurer_comparison: {},
+          weather_forecast: {},
         },
       },
       {
