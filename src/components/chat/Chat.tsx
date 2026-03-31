@@ -1,10 +1,12 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { useState, useEffect, useMemo } from 'react';
 import { usePayloadOverrides } from '@/hooks/usePayloadOverrides';
 import { useTheme } from '@/hooks/useTheme';
 import { useChatSessions } from '@/hooks/useChatSessions';
 import { useChatStream } from '@/hooks/useChatStream';
+import type { AppLocale } from '@/lib/i18n';
 import type { ProfileAvatarSettings } from '@/lib/profile/types';
 import { ChatHeader } from './ChatHeader';
 import { ChatTimeline } from './ChatTimeline';
@@ -34,7 +36,17 @@ const DEFAULT_ENABLED_COMMAND_IDS = getSlashCommandIdsForEnabledCards(
   FLOW_CARD_DEFINITIONS.filter((card) => card.defaultEnabled).map((card) => card.id)
 );
 
-export function Chat({ clerkEnabled = false }: { clerkEnabled?: boolean }) {
+export function Chat({
+  clerkEnabled = false,
+  trailingAccessory,
+  onLocaleChange,
+  headerAccessory,
+}: {
+  clerkEnabled?: boolean;
+  trailingAccessory?: ReactNode;
+  onLocaleChange?: (locale: AppLocale) => void;
+  headerAccessory?: ReactNode;
+}) {
   const { getOverrides } = usePayloadOverrides();
   const { theme, accentTheme, toggleTheme, setAccentTheme, mounted: themeMounted } = useTheme();
   
@@ -65,6 +77,10 @@ export function Chat({ clerkEnabled = false }: { clerkEnabled?: boolean }) {
   const [avatarSettings, setAvatarSettings] = useState<ProfileAvatarSettings>(
     DEFAULT_AVATAR_SETTINGS
   );
+
+  useEffect(() => {
+    onLocaleChange?.(locale);
+  }, [locale, onLocaleChange]);
 
   const {
     isLoading,
@@ -258,6 +274,7 @@ export function Chat({ clerkEnabled = false }: { clerkEnabled?: boolean }) {
         toggleTheme={toggleTheme}
         themeMounted={themeMounted}
         showNewChatButton={messages.length > 0 || toolMessages.length > 0}
+        headerAccessory={headerAccessory}
       />
 
       <ChatTimeline
@@ -298,6 +315,7 @@ export function Chat({ clerkEnabled = false }: { clerkEnabled?: boolean }) {
         }}
         onVoiceInputReady={handleVoiceInputReady}
         enabledCommandIds={enabledCommandIds}
+        trailingAccessory={trailingAccessory}
       />
     </div>
   );

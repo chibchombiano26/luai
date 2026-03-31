@@ -24,20 +24,6 @@ async function resolveProfileRequestContext(
   req: Request
 ): Promise<{ username: string; displayName: string } | Response> {
   if (isClerkAuthEnabled()) {
-    const fallbackIdentity = (() => {
-      const fromHeader = getUsernameFromRequest(req);
-      if (typeof fromHeader !== 'string') {
-        return null;
-      }
-
-      const normalized = fromHeader.trim();
-      if (!normalized || normalized === 'anonymous') {
-        return null;
-      }
-
-      return { usageUsername: normalized, displayName: normalized };
-    })();
-
     let clerkIdentity: ClerkIdentity | null = null;
     try {
       const resolvedIdentity = await ensureCurrentClerkUserAccess();
@@ -51,8 +37,7 @@ async function resolveProfileRequestContext(
       console.error('Clerk auth resolution failed in /api/profile:', error);
     }
 
-    const finalIdentity = clerkIdentity ?? fallbackIdentity;
-    if (!finalIdentity) {
+    if (!clerkIdentity) {
       return Response.json(
         { error: 'Authentication required' },
         {
@@ -65,8 +50,8 @@ async function resolveProfileRequestContext(
     }
 
     return {
-      username: finalIdentity.usageUsername,
-      displayName: finalIdentity.displayName,
+      username: clerkIdentity.usageUsername,
+      displayName: clerkIdentity.displayName,
     };
   }
 

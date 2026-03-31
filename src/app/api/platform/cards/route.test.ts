@@ -85,6 +85,17 @@ describe('Platform cards API', () => {
         enabled: true,
         toolId: 'show_weather_forecast',
         langflowEndpoint: '/weather/forecast',
+        homeExperiences: [
+          {
+            id: 'classic_form',
+            kind: 'form',
+            componentKey: 'weather_form',
+            label: {
+              es: 'Formulario clima',
+              en: 'Weather form',
+            },
+          },
+        ],
         config: {
           enabledCommands: ['weather_forecast'],
           systemPromptByLocale: { es: 'privado', en: 'private' },
@@ -107,6 +118,13 @@ describe('Platform cards API', () => {
         expect.objectContaining({
           id: 'weather_forecast',
           enabled: true,
+          homeExperiences: [
+            expect.objectContaining({
+              id: 'classic_form',
+              kind: 'form',
+              componentKey: 'weather_form',
+            }),
+          ],
           config: { enabledCommands: ['weather_forecast'] },
         }),
       ],

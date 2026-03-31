@@ -70,7 +70,6 @@ export async function POST(req: Request) {
     let resolvedUsername: string | null = null;
     let resolvedUserId: string | null = null;
     if (isClerkAuthEnabled()) {
-      const headerUsername = context.username !== 'anonymous' ? context.username : null;
       let clerkIdentity: ResolvedClerkIdentity | null = null;
       try {
         const resolvedIdentity = await ensureCurrentClerkUserAccess();
@@ -83,7 +82,7 @@ export async function POST(req: Request) {
       } catch (error) {
         console.error('Clerk auth resolution failed in /api/chat:', error);
       }
-      resolvedUsername = clerkIdentity?.username ?? headerUsername;
+      resolvedUsername = clerkIdentity?.username ?? null;
       resolvedUserId = clerkIdentity?.userId ?? null;
       if (!resolvedUsername) {
         return new Response(

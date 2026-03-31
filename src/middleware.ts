@@ -114,8 +114,16 @@ const clerkAuthMiddleware = clerkMiddleware(async (auth, request) => {
   }
 
   if (isApiRoute(request)) {
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.delete('x-auth-username');
+    requestHeaders.delete('x-clerk-user-id');
+
     if (!authState.userId) {
-      return NextResponse.next();
+      return NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
     }
 
     const claims = (authState.sessionClaims ?? {}) as Record<string, unknown>;
@@ -124,7 +132,6 @@ const clerkAuthMiddleware = clerkMiddleware(async (auth, request) => {
       (typeof claims.username === 'string' && claims.username.trim()) ||
       authState.userId;
 
-    const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-auth-username', usernameFromClaims);
     return NextResponse.next({
       request: {

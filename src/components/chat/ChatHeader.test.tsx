@@ -192,4 +192,12 @@ describe("ChatHeader", () => {
     await user.click(screen.getByRole("button", { name: "Paleta Azul" }));
     expect(props.setAccentTheme).toHaveBeenCalledWith("blue");
   });
+
+  it("renders any injected header accessory next to the native controls", () => {
+    renderHeader({
+      headerAccessory: <div data-testid="header-accessory">vista</div>,
+    });
+
+    expect(screen.getByTestId("header-accessory")).toBeInTheDocument();
+  });
 });

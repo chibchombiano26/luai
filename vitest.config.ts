@@ -36,19 +36,26 @@ const coreCoverageInclude = [
 const testInclude = isCoreCoverage
   ? ["src/**/*.test.ts", "src/**/*.test.tsx"]
   : isPackCoverage
-    ? ["flow-packs/**/*.test.ts", "flow-packs/**/*.test.tsx"]
+    ? [
+        "flow-packs/**/*.test.ts",
+        "flow-packs/**/*.test.tsx",
+        "private-packages/**/*.test.ts",
+        "private-packages/**/*.test.tsx",
+      ]
     : [
         "src/**/*.test.ts",
         "src/**/*.test.tsx",
         "flow-packs/**/*.test.ts",
         "flow-packs/**/*.test.tsx",
+        "private-packages/**/*.test.ts",
+        "private-packages/**/*.test.tsx",
       ];
 
 const coverageInclude = isCoreCoverage
   ? coreCoverageInclude
   : isPackCoverage
-    ? ["flow-packs/**/*.{ts,tsx}"]
-    : ["src/**/*.{ts,tsx}", "flow-packs/**/*.{ts,tsx}"];
+    ? ["flow-packs/**/*.{ts,tsx}", "private-packages/**/*.{ts,tsx}"]
+    : ["src/**/*.{ts,tsx}", "flow-packs/**/*.{ts,tsx}", "private-packages/**/*.{ts,tsx}"];
 
 const coverageThresholds = isCoreCoverage
   ? {

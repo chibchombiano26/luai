@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { useRef, useState, useEffect, CSSProperties } from 'react';
 import { Bot, AlertCircle, History, ChevronDown, Trash2, Settings, UserCircle2, Moon, Sun, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -31,6 +32,7 @@ interface ChatHeaderProps {
   toggleTheme: () => void;
   themeMounted: boolean;
   showNewChatButton: boolean;
+  headerAccessory?: ReactNode;
 }
 
 function BrandIdentity({
@@ -133,6 +135,7 @@ export function ChatHeader({
   toggleTheme,
   themeMounted,
   showNewChatButton,
+  headerAccessory,
 }: ChatHeaderProps) {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -197,6 +200,7 @@ export function ChatHeader({
         )}
         
         <div className="flex flex-wrap items-center gap-2">
+          {headerAccessory}
           {/* Locale Toggle */}
           <div className="flex items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 p-1">
             <button

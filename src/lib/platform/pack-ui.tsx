@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentType } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import type { ChatToolMessage } from '@/lib/chatHistory';
 import type { AppLocale } from '@/lib/i18n';
 import type { ProfileSummary, UsageSummary } from '@/lib/profile/types';
@@ -17,6 +17,20 @@ export interface FlowPackToolRendererRegistration {
   cardId?: string;
   titleByLocale?: Partial<Record<AppLocale, string>>;
   Component: ComponentType<FlowPackToolRendererProps>;
+}
+
+export interface FlowPackHomeExperienceProps {
+  cardId: string;
+  clerkEnabled: boolean;
+  locale?: AppLocale;
+  chromeAccessory?: ReactNode;
+  toolbarPortalTarget?: HTMLElement | null;
+  onLocaleChange?: (locale: AppLocale) => void;
+}
+
+export interface FlowPackHomeExperienceRegistration {
+  componentKey: string;
+  Component: ComponentType<FlowPackHomeExperienceProps>;
 }
 
 export interface FlowPackAdminPageProps {
@@ -51,6 +65,7 @@ export interface FlowPackUiModule {
   renderers?: readonly FlowPackToolRendererRegistration[];
   adminPages?: readonly FlowPackAdminPageRegistration[];
   profileWidgets?: readonly FlowPackProfileWidgetRegistration[];
+  homeExperiences?: readonly FlowPackHomeExperienceRegistration[];
 }
 
 function compareByOrderThenId(
@@ -85,6 +100,15 @@ export function getFlowPackProfileWidgetRegistrations(
     .sort(compareByOrderThenId);
 }
 
+export function getFlowPackHomeExperienceRegistrations(
+  modules: Record<string, FlowPackUiModule>
+): FlowPackHomeExperienceRegistration[] {
+  return Object.values(modules)
+    .flatMap((module) => module.homeExperiences ?? [])
+    .slice()
+    .sort((a, b) => a.componentKey.localeCompare(b.componentKey));
+}
+
 export function resolveFlowPackToolRenderer(
   registrations: readonly FlowPackToolRendererRegistration[],
   toolMessage: ChatToolMessage
@@ -108,4 +132,11 @@ export function resolveFlowPackToolRenderer(
   );
 
   return toolTypeMatch ?? null;
+}
+
+export function resolveFlowPackHomeExperience(
+  registrations: readonly FlowPackHomeExperienceRegistration[],
+  componentKey: string
+): FlowPackHomeExperienceRegistration | null {
+  return registrations.find((registration) => registration.componentKey === componentKey) ?? null;
 }

@@ -28,6 +28,17 @@ export interface FlowCardDefinition {
   toolId: string;
   supportedToolIds: readonly string[];
   langflowEndpoint?: string;
+  homeExperiences?: readonly {
+    id: string;
+    kind?: 'wizard' | 'form';
+    componentKey: string;
+    storageAliases?: readonly string[];
+    order?: number;
+    label: {
+      es: string;
+      en: string;
+    };
+  }[];
 }
 
 export interface FlowCardSettings {

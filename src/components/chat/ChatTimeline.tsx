@@ -14,6 +14,47 @@ import { AvatarBadge } from '../avatar/AvatarBadge';
 const FLOW_PACK_TOOL_RENDERERS = Object.values(GENERATED_FLOW_PACK_UI_MODULES).flatMap(
   (module) => module.renderers ?? []
 );
+const INVISIBLE_BBVA_PAYLOAD_PATTERN = /\u2063[\u200b\u200c]+\u2064/g;
+const VISIBLE_BBVA_PAYLOAD_PATTERN = /BBVA_FORM:(base|property|coverages|underwriting):(\{[^\n\r]*\})/g;
+const VISIBLE_BBVA_STAGE_PATTERN = /BBVA_FORM:(base|property|coverages|underwriting):/g;
+const MAX_VISIBLE_MESSAGE_LENGTH = 180;
+
+const BBVA_SUBMISSION_SUMMARY = {
+  es: {
+    base: 'He completado los datos base de la cotización BBVA.',
+    property: 'He completado los datos del predio para la cotización BBVA.',
+    coverages: 'He completado las coberturas de la cotización BBVA.',
+    underwriting: 'He completado la suscripción de la cotización BBVA.',
+  },
+  en: {
+    base: 'I completed the BBVA quote base data.',
+    property: 'I completed the property data for the BBVA quote.',
+    coverages: 'I completed the BBVA quote coverages.',
+    underwriting: 'I completed the BBVA quote underwriting block.',
+  },
+} as const;
+
+type BbvaSubmissionStage = keyof typeof BBVA_SUBMISSION_SUMMARY.es;
+
+function getVisibleMessageContent(message: ChatMessage, locale: AppLocale): string {
+  const withoutInvisiblePayload = message.content.replace(INVISIBLE_BBVA_PAYLOAD_PATTERN, '').trim();
+  const visibleStageMatches = Array.from(withoutInvisiblePayload.matchAll(VISIBLE_BBVA_STAGE_PATTERN));
+  const lastVisibleStage = visibleStageMatches.at(-1)?.[1] as BbvaSubmissionStage | undefined;
+  const withoutVisiblePayload = withoutInvisiblePayload
+    .replace(VISIBLE_BBVA_PAYLOAD_PATTERN, '')
+    .trim();
+
+  const bbvaSanitizedContent = withoutVisiblePayload || (
+    lastVisibleStage ? BBVA_SUBMISSION_SUMMARY[locale][lastVisibleStage] : ''
+  );
+  const content = bbvaSanitizedContent || withoutInvisiblePayload;
+
+  if (content.length <= MAX_VISIBLE_MESSAGE_LENGTH) {
+    return content;
+  }
+
+  return `${content.slice(0, MAX_VISIBLE_MESSAGE_LENGTH - 1).trimEnd()}…`;
+}
 
 function resolveToolResultTitle(toolMsg: ChatToolMessage, locale: AppLocale): string {
   if (toolMsg.type === 'dynamic_card' && typeof toolMsg.data.title === 'string') {
@@ -148,8 +189,8 @@ export function ChatTimeline({
                 size="sm"
                 className="flex-shrink-0"
               />
-              <div className={`p-4 rounded-2xl text-sm ${(item.data as ChatMessage).role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-tl-none dark:text-zinc-300'}`}>
-                {(item.data as ChatMessage).content}
+              <div className={`p-4 rounded-2xl text-sm whitespace-pre-wrap break-words overflow-hidden ${(item.data as ChatMessage).role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-tl-none dark:text-zinc-300'}`}>
+                {getVisibleMessageContent(item.data as ChatMessage, locale)}
               </div>
             </div>
           ) : (

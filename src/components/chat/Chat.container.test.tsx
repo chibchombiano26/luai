@@ -53,11 +53,22 @@ vi.mock('@/hooks/useChatStream', () => ({
 }));
 
 vi.mock('./ChatHeader', () => ({
-  ChatHeader: ({ showNewChatButton, hasOverrides, clerkEnabled }: { showNewChatButton: boolean; hasOverrides: boolean; clerkEnabled: boolean }) => (
+  ChatHeader: ({
+    showNewChatButton,
+    hasOverrides,
+    clerkEnabled,
+    headerAccessory,
+  }: {
+    showNewChatButton: boolean;
+    hasOverrides: boolean;
+    clerkEnabled: boolean;
+    headerAccessory?: React.ReactNode;
+  }) => (
     <div>
       <div data-testid="chat-header-show-new">{String(showNewChatButton)}</div>
       <div data-testid="chat-header-has-overrides">{String(hasOverrides)}</div>
       <div data-testid="chat-header-clerk-enabled">{String(clerkEnabled)}</div>
+      {headerAccessory ? <div data-testid="chat-header-accessory">{headerAccessory}</div> : null}
     </div>
   ),
 }));
@@ -87,6 +98,7 @@ vi.mock('./ChatInput', () => ({
     onInputCompositionEnd: () => void;
     pendingAutoSubmit: { text: string; secondsLeft: number } | null;
     enabledCommandIds?: string[];
+    trailingAccessory?: React.ReactNode;
   }) => (
     <div>
       <div data-testid="chat-input-value">{props.input}</div>
@@ -96,6 +108,9 @@ vi.mock('./ChatInput', () => ({
       <div data-testid="chat-input-pending-auto-submit">
         {props.pendingAutoSubmit ? `${props.pendingAutoSubmit.text}:${props.pendingAutoSubmit.secondsLeft}` : 'none'}
       </div>
+      {props.trailingAccessory ? (
+        <div data-testid="chat-input-trailing-accessory">{props.trailingAccessory}</div>
+      ) : null}
       <button type="button" onClick={() => props.setInput('manual input')}>
         set manual input
       </button>
@@ -252,5 +267,42 @@ describe('Chat container', () => {
 
     expect(screen.getByTestId('chat-header-show-new')).toHaveTextContent('true');
     expect(screen.getByTestId('chat-header-has-overrides')).toHaveTextContent('true');
+  });
+
+  it('forwards header and trailing accessories and reports locale changes', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ cards: [] }),
+      })
+    );
+    const onLocaleChange = vi.fn();
+    const { rerender } = render(
+      <Chat
+        headerAccessory={<div data-testid="external-header-control">header</div>}
+        trailingAccessory={<div data-testid="external-trailing-control">trailing</div>}
+        onLocaleChange={onLocaleChange}
+      />
+    );
+
+    expect(await screen.findByTestId('chat-header-accessory')).toBeInTheDocument();
+    expect(screen.getByTestId('external-header-control')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-input-trailing-accessory')).toBeInTheDocument();
+    expect(screen.getByTestId('external-trailing-control')).toBeInTheDocument();
+    expect(onLocaleChange).toHaveBeenCalledWith('es');
+
+    sessionState.locale = 'en';
+    rerender(
+      <Chat
+        headerAccessory={<div data-testid="external-header-control">header</div>}
+        trailingAccessory={<div data-testid="external-trailing-control">trailing</div>}
+        onLocaleChange={onLocaleChange}
+      />
+    );
+
+    await waitFor(() => {
+      expect(onLocaleChange).toHaveBeenCalledWith('en');
+    });
   });
 });

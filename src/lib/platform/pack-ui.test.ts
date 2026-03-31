@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   getFlowPackAdminPageRegistrations,
+  getFlowPackHomeExperienceRegistrations,
   getFlowPackProfileWidgetRegistrations,
   resolveFlowPackAdminPage,
+  resolveFlowPackHomeExperience,
   resolveFlowPackToolRenderer,
 } from './pack-ui';
 import type {
   FlowPackAdminPageRegistration,
+  FlowPackHomeExperienceRegistration,
   FlowPackProfileWidgetRegistration,
   FlowPackToolRendererRegistration,
 } from './pack-ui';
@@ -25,6 +28,7 @@ function createToolMessage(toolMessage: Partial<ChatToolMessage>): ChatToolMessa
 describe('platform pack ui', () => {
   const DummyComponent = (() => null) as FlowPackToolRendererRegistration['Component'];
   const DummyAdminComponent = (() => null) as FlowPackAdminPageRegistration['Component'];
+  const DummyHomeComponent = (() => null) as FlowPackHomeExperienceRegistration['Component'];
   const DummyProfileComponent = (() => null) as FlowPackProfileWidgetRegistration['Component'];
 
   it('collects and sorts injected admin pages by order then id', () => {
@@ -105,6 +109,28 @@ describe('platform pack ui', () => {
       'billing-tier',
       'usage-tier',
     ]);
+  });
+
+  it('collects and resolves injected home experiences', () => {
+    const registrations = getFlowPackHomeExperienceRegistrations({
+      alpha: {
+        homeExperiences: [
+          { componentKey: 'bbva_form', Component: DummyHomeComponent },
+        ],
+      },
+      beta: {
+        homeExperiences: [
+          { componentKey: 'bbva_wizard', Component: DummyHomeComponent },
+        ],
+      },
+    });
+
+    expect(registrations.map((registration) => registration.componentKey)).toEqual([
+      'bbva_form',
+      'bbva_wizard',
+    ]);
+    expect(resolveFlowPackHomeExperience(registrations, 'bbva_form')).toEqual(registrations[0]);
+    expect(resolveFlowPackHomeExperience(registrations, 'missing')).toBeNull();
   });
 
   it('prefers exact dynamic-card matches by cardId', () => {

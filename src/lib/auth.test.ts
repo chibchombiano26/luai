@@ -32,12 +32,19 @@ describe('getUsernameFromRequest', () => {
     expect(getUsernameFromRequest(request)).toBe('forwarded-user');
   });
 
-  it('uses x-clerk-user-id when forwarded username is not available', () => {
+  it('ignores forwarded username when Clerk auth is enabled', () => {
+    process.env = {
+      ...originalEnv,
+      CLERK_AUTH_ENABLED: 'true',
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: 'pk_test_123',
+      CLERK_SECRET_KEY: 'sk_test_123',
+    };
+
     const request = new Request('http://localhost', {
-      headers: { 'x-clerk-user-id': 'user_123' },
+      headers: { 'x-auth-username': 'forwarded-user' },
     });
 
-    expect(getUsernameFromRequest(request)).toBe('user_123');
+    expect(getUsernameFromRequest(request)).toBe('anonymous');
   });
 
   it('returns anonymous when decoded value does not contain separator', () => {

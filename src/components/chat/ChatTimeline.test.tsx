@@ -174,6 +174,46 @@ describe('ChatTimeline', () => {
     expect(screen.getByText('Fallo al consultar el flujo')).toBeInTheDocument();
   });
 
+  it('hides visible BBVA form payloads from user bubbles', () => {
+    const props = createBaseProps();
+    props.messages = [
+      createMessage({
+        id: 'user-bbva-1',
+        role: 'user',
+        timestamp: 1,
+        content:
+          'He completado las coberturas de la cotización BBVA. BBVA_FORM:coverages:{"rceIncludesProducts":true,"mgcLimit":5000000}',
+      }),
+    ];
+
+    render(<ChatTimeline {...props} />);
+
+    expect(
+      screen.getByText('He completado las coberturas de la cotización BBVA.')
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/BBVA_FORM:coverages:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/"mgcLimit":5000000/)).not.toBeInTheDocument();
+  });
+
+  it('truncates oversized chat messages before they break the layout', () => {
+    const props = createBaseProps();
+    const longMessage = `prefijo-${'x'.repeat(220)}`;
+    props.messages = [
+      createMessage({
+        id: 'assistant-long-1',
+        timestamp: 1,
+        content: longMessage,
+      }),
+    ];
+
+    render(<ChatTimeline {...props} />);
+
+    const bubble = screen.getByText(new RegExp(`^prefijo-x{20}`));
+    expect(bubble.textContent?.endsWith('…')).toBe(true);
+    expect(bubble.textContent && bubble.textContent.length).toBeLessThan(longMessage.length);
+    expect(screen.queryByText(longMessage)).not.toBeInTheDocument();
+  });
+
   it('shows typing and API progress indicators only when applicable', async () => {
     const props = createBaseProps();
     const { rerender } = render(

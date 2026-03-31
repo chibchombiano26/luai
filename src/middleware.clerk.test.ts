@@ -96,7 +96,12 @@ describe('middleware with Clerk enabled', () => {
     const { middleware } = await import('./middleware');
 
     const response = await middleware(
-      new Request('http://localhost/api/chat'),
+      new Request('http://localhost/api/chat', {
+        headers: {
+          'x-auth-username': 'spoofed-user',
+          'x-clerk-user-id': 'spoofed-id',
+        },
+      }),
       {} as never
     );
 

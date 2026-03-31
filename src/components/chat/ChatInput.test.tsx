@@ -226,4 +226,12 @@ describe("ChatInput", () => {
     expect(props.onKeyDown).not.toHaveBeenCalled();
   });
 
+  it("renders any trailing accessory inline with the input controls", () => {
+    renderChatInput({
+      trailingAccessory: <div data-testid="chat-input-accessory">vista</div>,
+    });
+
+    expect(screen.getByTestId("chat-input-accessory")).toBeInTheDocument();
+  });
+
 });

@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { useRef, useEffect, useState } from 'react';
 import { Send, Mic, MicOff, Square } from 'lucide-react';
 import { AppLocale } from '@/lib/i18n';
@@ -24,6 +25,7 @@ interface ChatInputProps {
   onSelectCommand: (command: SlashCommandSelection) => void;
   onVoiceInputReady: (text: string) => void;
   enabledCommandIds?: ChatCommandId[];
+  trailingAccessory?: ReactNode;
 }
 
 interface SpeechRecognitionResultItemLike {
@@ -77,6 +79,7 @@ export function ChatInput({
   onSelectCommand,
   onVoiceInputReady,
   enabledCommandIds,
+  trailingAccessory,
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const slashCommandMenuRef = useRef<SlashCommandMenuHandle | null>(null);
@@ -276,6 +279,7 @@ export function ChatInput({
             enabledCommandIds={enabledCommandIds}
           />
         </div>
+        {trailingAccessory ? <div className="flex shrink-0 items-center">{trailingAccessory}</div> : null}
         {voiceSupported && (
           <button
             type="button"

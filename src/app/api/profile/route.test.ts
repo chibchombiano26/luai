@@ -169,27 +169,16 @@ describe('Profile API route', () => {
     expect(body.profile.displayName).toBe('Jose Ramirez');
   });
 
-  it('falls back to header username when Clerk auth() throws', async () => {
+  it('returns 401 when Clerk auth resolution fails', async () => {
     vi.mocked(isClerkAuthEnabled).mockReturnValueOnce(true);
     vi.mocked(ensureCurrentClerkUserAccess).mockRejectedValueOnce(new Error('clerk unavailable'));
-    vi.mocked(getUsernameFromRequest).mockReturnValueOnce('header-user');
-    vi.mocked(getUsageSummaryForUser).mockResolvedValueOnce({
-      username: 'header-user',
-      totalRequests: 1,
-      totalQuotes: 0,
-      totalInputTokens: 0,
-      totalOutputTokens: 0,
-      totalTokens: 0,
-      last30DaysTokens: 0,
-      last30DaysRequests: 1,
-      dailyUsage: [],
-      recentEvents: [],
-    });
 
     const response = await GET(new Request('http://localhost/api/profile'));
+    const body = await response.json();
 
-    expect(response.status).toBe(200);
-    expect(getUsageSummaryForUser).toHaveBeenCalledWith('header-user');
+    expect(response.status).toBe(401);
+    expect(body).toEqual({ error: 'Authentication required' });
+    expect(getUsageSummaryForUser).not.toHaveBeenCalled();
   });
 
   it('uses username claim and current user email fallback when full name is unavailable', async () => {

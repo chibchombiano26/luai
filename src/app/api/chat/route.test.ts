@@ -172,6 +172,26 @@ describe('POST /api/chat', () => {
     expect(streamText).not.toHaveBeenCalled();
   });
 
+  it('returns 401 when Clerk auth resolution fails even if a username header was parsed', async () => {
+    vi.mocked(isClerkAuthEnabled).mockReturnValue(true);
+    vi.mocked(getUsernameFromRequest).mockReturnValue('spoofed-header-user');
+    vi.mocked(ensureCurrentClerkUserAccess).mockRejectedValueOnce(new Error('clerk unavailable'));
+
+    const response = await POST(
+      createChatRequest({
+        locale: 'es',
+        messages: [{ role: 'user', content: 'hola' }],
+      })
+    );
+
+    expect(response.status).toBe(401);
+    expect(await response.json()).toEqual({
+      error: 'UNAUTHORIZED',
+      message: 'Authentication required',
+    });
+    expect(streamText).not.toHaveBeenCalled();
+  });
+
   it('provisions viewer role when Clerk auth is enabled and the user has no assigned role yet', async () => {
     vi.mocked(isClerkAuthEnabled).mockReturnValue(true);
     vi.mocked(ensureCurrentClerkUserAccess).mockResolvedValueOnce({

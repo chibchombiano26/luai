@@ -19,14 +19,11 @@ function getBasicFallbackUsername(): string {
 }
 
 export function getUsernameFromRequest(request: Request): string {
-  const forwardedUsername = request.headers.get('x-auth-username')?.trim();
-  if (forwardedUsername) {
-    return forwardedUsername;
-  }
-
-  const clerkUserId = request.headers.get('x-clerk-user-id')?.trim();
-  if (clerkUserId) {
-    return clerkUserId;
+  if (!isClerkAuthEnabled()) {
+    const forwardedUsername = request.headers.get('x-auth-username')?.trim();
+    if (forwardedUsername) {
+      return forwardedUsername;
+    }
   }
 
   const header = request.headers.get('authorization');
