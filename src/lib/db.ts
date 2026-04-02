@@ -1,5 +1,3 @@
-
-import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { createClient } from "@libsql/client";
 import { resolveActiveDatabaseConnectionConfig } from "@/lib/database-provider-config";
@@ -78,9 +76,10 @@ export async function getDb(): Promise<DbInterface> {
       const dbPath = connection.sqlitePath;
       console.log(`📂 Using local SQLite at: ${dbPath}`);
 
+      const sqlite3 = await import('sqlite3');
       const sqliteDb = await open({
         filename: dbPath,
-        driver: sqlite3.Database,
+        driver: sqlite3.default.Database,
       });
 
       dbInstance = {
